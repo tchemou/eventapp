@@ -1,7 +1,11 @@
+import 'package:flutter/foundation.dart';
+
 class ApiConfig {
   ApiConfig._();
 
-  static const String baseUrl = 'http://147.79.110.41:8080/api/v1';
+  static const String baseUrl = kIsWeb 
+      ? 'http://localhost:8080/api/v1' 
+      : 'http://192.168.1.181:8080/api/v1';
 
   // ─── Auth (OTP SMS) ───────────────────────────────────────────────────────
   static const String authSignupMobile    = '/auth/signup-mobile';
@@ -56,7 +60,7 @@ class ApiConfig {
   static const String validatePromoCode = '/organizer/promo-codes/validate';
 
   // ─── Profile ──────────────────────────────────────────────────────────────
-  static const String updateUserProfile = '/auth/me';
+  static const String updateUserProfile = '/profiles/buyer';
 
   // ─── Waiting List ─────────────────────────────────────────────────────────
   static const String joinWaitingList   = '/client/waiting-list';

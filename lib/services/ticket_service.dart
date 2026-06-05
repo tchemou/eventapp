@@ -20,7 +20,7 @@ class TicketService {
       },
     );
 
-    final tickets = (response['content'] as List)
+    final tickets = ((response['data'] ?? []) as List)
         .map((e) => Ticket.fromJson(e as Map<String, dynamic>))
         .toList();
     return tickets;

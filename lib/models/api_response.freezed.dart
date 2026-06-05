@@ -281,6 +281,7 @@ ApiError _$ApiErrorFromJson(Map<String, dynamic> json) {
 mixin _$ApiError {
   int get statusCode => throw _privateConstructorUsedError;
   String get message => throw _privateConstructorUsedError;
+  String? get code => throw _privateConstructorUsedError;
   Map<String, dynamic>? get errors => throw _privateConstructorUsedError;
 
   /// Serializes this ApiError to a JSON map.
@@ -298,7 +299,11 @@ abstract class $ApiErrorCopyWith<$Res> {
   factory $ApiErrorCopyWith(ApiError value, $Res Function(ApiError) then) =
       _$ApiErrorCopyWithImpl<$Res, ApiError>;
   @useResult
-  $Res call({int statusCode, String message, Map<String, dynamic>? errors});
+  $Res call(
+      {int statusCode,
+      String message,
+      String? code,
+      Map<String, dynamic>? errors});
 }
 
 /// @nodoc
@@ -318,6 +323,7 @@ class _$ApiErrorCopyWithImpl<$Res, $Val extends ApiError>
   $Res call({
     Object? statusCode = null,
     Object? message = null,
+    Object? code = freezed,
     Object? errors = freezed,
   }) {
     return _then(_value.copyWith(
@@ -329,6 +335,10 @@ class _$ApiErrorCopyWithImpl<$Res, $Val extends ApiError>
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String,
+      code: freezed == code
+          ? _value.code
+          : code // ignore: cast_nullable_to_non_nullable
+              as String?,
       errors: freezed == errors
           ? _value.errors
           : errors // ignore: cast_nullable_to_non_nullable
@@ -345,7 +355,11 @@ abstract class _$$ApiErrorImplCopyWith<$Res>
       __$$ApiErrorImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int statusCode, String message, Map<String, dynamic>? errors});
+  $Res call(
+      {int statusCode,
+      String message,
+      String? code,
+      Map<String, dynamic>? errors});
 }
 
 /// @nodoc
@@ -363,6 +377,7 @@ class __$$ApiErrorImplCopyWithImpl<$Res>
   $Res call({
     Object? statusCode = null,
     Object? message = null,
+    Object? code = freezed,
     Object? errors = freezed,
   }) {
     return _then(_$ApiErrorImpl(
@@ -374,6 +389,10 @@ class __$$ApiErrorImplCopyWithImpl<$Res>
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String,
+      code: freezed == code
+          ? _value.code
+          : code // ignore: cast_nullable_to_non_nullable
+              as String?,
       errors: freezed == errors
           ? _value._errors
           : errors // ignore: cast_nullable_to_non_nullable
@@ -388,6 +407,7 @@ class _$ApiErrorImpl implements _ApiError {
   const _$ApiErrorImpl(
       {required this.statusCode,
       required this.message,
+      this.code,
       final Map<String, dynamic>? errors})
       : _errors = errors;
 
@@ -398,6 +418,8 @@ class _$ApiErrorImpl implements _ApiError {
   final int statusCode;
   @override
   final String message;
+  @override
+  final String? code;
   final Map<String, dynamic>? _errors;
   @override
   Map<String, dynamic>? get errors {
@@ -410,7 +432,7 @@ class _$ApiErrorImpl implements _ApiError {
 
   @override
   String toString() {
-    return 'ApiError(statusCode: $statusCode, message: $message, errors: $errors)';
+    return 'ApiError(statusCode: $statusCode, message: $message, code: $code, errors: $errors)';
   }
 
   @override
@@ -421,12 +443,13 @@ class _$ApiErrorImpl implements _ApiError {
             (identical(other.statusCode, statusCode) ||
                 other.statusCode == statusCode) &&
             (identical(other.message, message) || other.message == message) &&
+            (identical(other.code, code) || other.code == code) &&
             const DeepCollectionEquality().equals(other._errors, _errors));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, statusCode, message,
+  int get hashCode => Object.hash(runtimeType, statusCode, message, code,
       const DeepCollectionEquality().hash(_errors));
 
   /// Create a copy of ApiError
@@ -449,6 +472,7 @@ abstract class _ApiError implements ApiError {
   const factory _ApiError(
       {required final int statusCode,
       required final String message,
+      final String? code,
       final Map<String, dynamic>? errors}) = _$ApiErrorImpl;
 
   factory _ApiError.fromJson(Map<String, dynamic> json) =
@@ -458,6 +482,8 @@ abstract class _ApiError implements ApiError {
   int get statusCode;
   @override
   String get message;
+  @override
+  String? get code;
   @override
   Map<String, dynamic>? get errors;
 

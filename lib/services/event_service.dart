@@ -25,7 +25,7 @@ class EventService {
       },
     );
 
-    final events = (response['content'] as List)
+    final events = ((response['data'] ?? response['content'] ?? []) as List)
         .map((e) => Event.fromJson(e as Map<String, dynamic>))
         .toList();
     return events;
@@ -58,7 +58,7 @@ class EventService {
       },
     );
 
-    final events = (response['content'] as List)
+    final events = ((response['data'] ?? response['content'] ?? []) as List)
         .map((e) => Event.fromJson(e as Map<String, dynamic>))
         .toList();
     return events;
@@ -149,7 +149,7 @@ class EventService {
       ApiConfig.getFavorites,
     );
 
-    final events = (response['content'] as List)
+    final events = ((response['data'] ?? response['content'] ?? []) as List)
         .map((e) => Event.fromJson(e as Map<String, dynamic>))
         .toList();
     return events;

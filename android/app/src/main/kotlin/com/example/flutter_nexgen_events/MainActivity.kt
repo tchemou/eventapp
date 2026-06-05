@@ -1,4 +1,4 @@
-package com.example.nexgen_events
+package com.example.flutter_nexgen_events
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -41,7 +41,7 @@ class OrderService {
       },
     );
 
-    final orders = (response['content'] as List)
+    final orders = ((response['data'] ?? response['content'] ?? []) as List)
         .map((e) => Order.fromJson(e as Map<String, dynamic>))
         .toList();
     return orders;
@@ -60,7 +60,7 @@ class OrderService {
       },
     );
 
-    final orders = (response['content'] as List)
+    final orders = ((response['data'] ?? response['content'] ?? []) as List)
         .map((e) => Order.fromJson(e as Map<String, dynamic>))
         .toList();
     return orders;

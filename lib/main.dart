@@ -5,9 +5,10 @@ import 'config/app_theme.dart';
 import 'providers/auth_provider.dart';
 import 'providers/event_provider.dart';
 import 'providers/order_provider.dart';
+import 'providers/ticket_provider.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/welcome_screen.dart';   // ✅ ajouté
-import 'screens/home_screen.dart';
+import 'screens/main_shell.dart';
 import 'screens/splash_screen.dart';
 import 'services/auth_service.dart';
 import 'services/event_service.dart';
@@ -44,6 +45,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => AuthProvider(authService)),
         ChangeNotifierProvider(create: (_) => EventProvider(eventService)),
         ChangeNotifierProvider(create: (_) => OrderProvider(orderService)),
+        ChangeNotifierProvider(create: (_) => TicketProvider(ticketService)),
       ],
       child: const NexGenEventsApp(),
     ),
@@ -107,7 +109,7 @@ class _NexGenEventsAppState extends State<NexGenEventsApp> {
                 if (authProvider.isLoggedIn) {
                   // ✅ Nouvel utilisateur → WelcomeScreen
                   if (authProvider.isNewUser) return const WelcomeScreen();
-                  return const HomeScreen();
+                  return const MainShell();
                 }
                 if (_showSplash) {
                   return SplashScreen(

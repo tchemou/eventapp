@@ -52,7 +52,18 @@ class Ticket with _$Ticket {
     DateTime? createdAt,
   }) = _Ticket;
 
-  factory Ticket.fromJson(Map<String, dynamic> json) => _$TicketFromJson(json);
+  factory Ticket.fromJson(Map<String, dynamic> json) =>
+      _$TicketFromJson(_prepareJson(json));
+
+  static Map<String, dynamic> _prepareJson(Map<String, dynamic> json) {
+    final mappedJson = Map<String, dynamic>.from(json);
+    mappedJson['orderId'] ??= '';
+    mappedJson['eventId'] ??= '';
+    mappedJson['ticketTypeId'] ??= '';
+    mappedJson['buyerId'] ??= '';
+    mappedJson['ticketNumber'] ??= json['qrCode'] ?? '';
+    return mappedJson;
+  }
 }
 
 @freezed

@@ -772,10 +772,10 @@ packages:
     dependency: "direct main"
     description:
       name: pinput
-      sha256: a92b55ecf9c25d1b9e100af45905385d5bc34fc9b6b04177a9e82cb88fe4d805
+      sha256: "4c3f1b84768b47a56a1abdaca551bd7cef4ac673b882209039ecdf803a5d6e68"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.1"
+    version: "6.0.2"
   platform:
     dependency: transitive
     description:
@@ -966,13 +966,13 @@ packages:
     source: sdk
     version: "0.0.0"
   smart_auth:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: smart_auth
-      sha256: a25229b38c02f733d0a4e98d941b42bed91a976cb589e934895e60ccfa674cf6
+      sha256: a536423c50d71e9a311d16027346634d0deadd07dafc5b5606b46719cf6fb2b6
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.1"
+    version: "3.2.0"
   source_gen:
     dependency: transitive
     description:
@@ -1093,14 +1093,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
-  universal_platform:
-    dependency: transitive
-    description:
-      name: universal_platform
-      sha256: "64e16458a0ea9b99260ceb5467a214c1f298d647c659af1bff6d3bf82536b1ec"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.0"
   uuid:
     dependency: "direct main"
     description:
