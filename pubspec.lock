@@ -358,7 +358,11 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.0"
-<<<<<<< HEAD
+  flutter_localizations:
+    dependency: "direct main"
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   flutter_map:
     dependency: "direct main"
     description:
@@ -367,13 +371,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.2"
-=======
-  flutter_localizations:
-    dependency: "direct main"
-    description: flutter
-    source: sdk
-    version: "0.0.0"
->>>>>>> 63b260328175168e24cc81cd18cb25230d1fdcf2
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -1173,7 +1170,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
-<<<<<<< HEAD
   unicode:
     dependency: transitive
     description:
@@ -1182,8 +1178,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.1"
-=======
->>>>>>> 63b260328175168e24cc81cd18cb25230d1fdcf2
   uuid:
     dependency: "direct main"
     description:
