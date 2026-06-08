@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/user.dart';
+import '../models/api_response.dart';
 import '../services/auth_service.dart';
 
 enum AuthStep { idle, otpSent, authenticated }
@@ -120,15 +121,13 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<bool> updateProfile({
-    String? firstName,
-    String? lastName,
+    String? fullName,
     String? phoneNumber,
   }) async {
     _setLoading(true);
     try {
       _user = await _authService.updateProfile(
-        firstName: firstName,
-        lastName: lastName,
+        fullName: fullName,
         phoneNumber: phoneNumber,
       );
       notifyListeners();
@@ -158,12 +157,35 @@ class AuthProvider extends ChangeNotifier {
   void _setError(String msg) { _error = msg; notifyListeners(); }
 
   String _parseError(dynamic e) {
+    if (e is ApiError) {
+      if (e.code != null) {
+        switch (e.code) {
+          case 'USER_NOT_FOUND': return 'Numéro non enregistré. Inscrivez-vous.';
+          case 'INVALID_OTP': return 'Code OTP incorrect.';
+          case 'OTP_EXPIRED': return 'Code expiré. Veuillez demander un nouveau.';
+          case 'TOO_MANY_ATTEMPTS': return 'Trop de tentatives. Réessayez plus tard.';
+          case 'PHONE_ALREADY_REGISTERED': return 'Ce numéro est déjà utilisé.';
+          case 'ROUTE_NOT_FOUND': return 'Le service demandé est introuvable.';
+          case 'EMPTY_REQUEST': return 'Veuillez renseigner au moins un champ.';
+          case 'VALIDATION_FAILED': return 'Veuillez vérifier les informations saisies.';
+          case 'NOT_AUTHENTICATED': return 'Votre session a expiré. Connectez-vous à nouveau.';
+          case 'UNAUTHORIZED': return 'Action non autorisée.';
+        }
+      }
+      final msg = e.message.toLowerCase();
+      if (msg.contains('user_not_found') || msg.contains('not found')) return 'Utilisateur ou ressource introuvable.';
+      if (msg.contains('invalid_otp')) return 'Code OTP incorrect.';
+      if (msg.contains('already registered')) return 'Ce numéro est déjà utilisé.';
+    }
+    
     final str = e.toString();
     if (str.contains('USER_NOT_FOUND'))    return 'Numéro non enregistré. Inscrivez-vous.';
     if (str.contains('INVALID_OTP'))       return 'Code OTP incorrect.';
     if (str.contains('OTP_EXPIRED'))       return 'Code expiré. Demandez un nouveau.';
     if (str.contains('TOO_MANY'))          return 'Trop de tentatives. Réessayez plus tard.';
     if (str.contains('already registered')) return 'Ce numéro est déjà utilisé.';
+    if (str.contains('ROUTE_NOT_FOUND') || str.contains('404')) return 'Service indisponible pour le moment.';
+    
     return 'Une erreur est survenue. Réessayez.';
   }
 }

@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class ApiConfig {
   ApiConfig._();
 
@@ -56,7 +58,7 @@ class ApiConfig {
   static const String validatePromoCode = '/organizer/promo-codes/validate';
 
   // ─── Profile ──────────────────────────────────────────────────────────────
-  static const String updateUserProfile = '/auth/me';
+  static const String updateUserProfile = '/profiles/buyer';
 
   // ─── Waiting List ─────────────────────────────────────────────────────────
   static const String joinWaitingList   = '/client/waiting-list';

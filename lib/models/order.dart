@@ -3,71 +3,91 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'order.freezed.dart';
 part 'order.g.dart';
 
+// ── Order ─────────────────────────────────────────────────────────────────
 @freezed
 class Order with _$Order {
   const factory Order({
     required String id,
-    required String eventId,
-    required String buyerId,
-    required List<OrderItem> items,
-    required double totalPrice,
-    required String status,
-    String? promoCode,
-    double? discountAmount,
-    String? paymentMethod,
-    String? paymentReference,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    @JsonKey(name: 'totalAmount') double? totalAmount,
+    String? status,
+    @JsonKey(name: 'orderDate') DateTime? createdAt,
+    BuyerProfile? buyer,
+    List<Ticket>? tickets,
+    PaymentInfo? payment,
+    String? appliedPromoCode,
   }) = _Order;
 
   factory Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);
 }
 
+// ── BuyerProfile ──────────────────────────────────────────────────────────
 @freezed
-class OrderItem with _$OrderItem {
-  const factory OrderItem({
-    required String ticketTypeId,
-    required String ticketTypeName,
-    required int quantity,
-    required double unitPrice,
-  }) = _OrderItem;
+class BuyerProfile with _$BuyerProfile {
+  const factory BuyerProfile({
+    String? fullName,
+    String? email,
+    String? phoneNumber,
+    String? city,
+    String? neighborhood,
+  }) = _BuyerProfile;
 
-  factory OrderItem.fromJson(Map<String, dynamic> json) =>
-      _$OrderItemFromJson(json);
+  factory BuyerProfile.fromJson(Map<String, dynamic> json) =>
+      _$BuyerProfileFromJson(json);
 }
 
+// ── TicketTypeInfo ────────────────────────────────────────────────────────
+@freezed
+class TicketTypeInfo with _$TicketTypeInfo {
+  const factory TicketTypeInfo({
+    String? id,
+    String? name,
+    double? price,
+    int? availableQuantity,
+    int? soldQuantity,
+    bool? isVisible,
+    bool? isFree,
+  }) = _TicketTypeInfo;
+
+  factory TicketTypeInfo.fromJson(Map<String, dynamic> json) =>
+      _$TicketTypeInfoFromJson(json);
+}
+
+// ── Ticket ────────────────────────────────────────────────────────────────
 @freezed
 class Ticket with _$Ticket {
   const factory Ticket({
     required String id,
-    required String orderId,
-    required String eventId,
-    required String ticketTypeId,
-    required String buyerId,
-    required String ticketNumber,
     String? qrCode,
-    required String status,
-    DateTime? usedAt,
-    String? transferredTo,
+    String? status,
+    DateTime? purchaseDate,
+    String? participantName,
     DateTime? createdAt,
+    bool? nominal,
+    @JsonKey(name: 'ticketType') TicketTypeInfo? ticketType,
   }) = _Ticket;
 
-  factory Ticket.fromJson(Map<String, dynamic> json) => _$TicketFromJson(json);
+  factory Ticket.fromJson(Map<String, dynamic> json) =>
+      _$TicketFromJson(json);
 }
 
+// ── PaymentInfo ───────────────────────────────────────────────────────────
 @freezed
-class CreateOrderRequest with _$CreateOrderRequest {
-  const factory CreateOrderRequest({
-    required String eventId,
-    required List<OrderItemRequest> items,
-    String? promoCode,
-    String? paymentMethodId,
-  }) = _CreateOrderRequest;
+class PaymentInfo with _$PaymentInfo {
+  const factory PaymentInfo({
+    String? id,
+    double? amount,
+    String? currency,
+    DateTime? paymentDate,
+    String? status,
+    String? paymentMethod,
+    String? transactionReference,
+  }) = _PaymentInfo;
 
-  factory CreateOrderRequest.fromJson(Map<String, dynamic> json) =>
-      _$CreateOrderRequestFromJson(json);
+  factory PaymentInfo.fromJson(Map<String, dynamic> json) =>
+      _$PaymentInfoFromJson(json);
 }
 
+// ── OrderItemRequest ──────────────────────────────────────────────────────
 @freezed
 class OrderItemRequest with _$OrderItemRequest {
   const factory OrderItemRequest({
@@ -79,10 +99,11 @@ class OrderItemRequest with _$OrderItemRequest {
       _$OrderItemRequestFromJson(json);
 }
 
+// ── TransferTicketRequest ─────────────────────────────────────────────────
 @freezed
 class TransferTicketRequest with _$TransferTicketRequest {
   const factory TransferTicketRequest({
-    required String recipientEmail,
+    required String newParticipantName,
   }) = _TransferTicketRequest;
 
   factory TransferTicketRequest.fromJson(Map<String, dynamic> json) =>

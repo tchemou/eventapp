@@ -233,6 +233,7 @@ class HttpService {
     return ApiError(
       statusCode: statusCode,
       message: message,
+      code: error.response?.data['code'],
       errors: error.response?.data['errors'],
     );
   }

@@ -13,8 +13,6 @@ class EventProvider extends ChangeNotifier {
   Event? _selectedEvent;
   bool _isLoading = false;
   String? _error;
-  int _currentPage = 0;
-  int _pageSize = 10;
 
   // Getters
   List<Event> get events => _events;
@@ -24,23 +22,22 @@ class EventProvider extends ChangeNotifier {
   String? get error => _error;
 
   /// Fetch all events
+  /// ✅ FIX : aligné sur EventService.getEvents(status, title, category)
+  /// Les paramètres page/pageSize/search n'existent pas dans le service → supprimés
   Future<bool> fetchEvents({
-    int page = 0,
-    int pageSize = 10,
+    String? status,
+    String? title,
     String? category,
-    String? search,
   }) async {
     _isLoading = true;
     _error = null;
-    _currentPage = page;
     notifyListeners();
 
     try {
       _events = await _eventService.getEvents(
-        page: page,
-        pageSize: pageSize,
+        status: status,
+        title: title,
         category: category,
-        search: search,
       );
 
       notifyListeners();
@@ -84,25 +81,15 @@ class EventProvider extends ChangeNotifier {
   }
 
   /// Search events
-  Future<bool> searchEvents({
-    required String query,
-    String? category,
-    DateTime? startDate,
-    DateTime? endDate,
-    String? location,
-  }) async {
+  /// ✅ FIX : aligné sur EventService.searchEvents(query) uniquement
+  /// Les paramètres category/startDate/endDate/location n'existent pas → supprimés
+  Future<bool> searchEvents({required String query}) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      _events = await _eventService.searchEvents(
-        query: query,
-        category: category,
-        startDate: startDate,
-        endDate: endDate,
-        location: location,
-      );
+      _events = await _eventService.searchEvents(query: query);
 
       notifyListeners();
       return true;
@@ -121,15 +108,18 @@ class EventProvider extends ChangeNotifier {
   }
 
   /// Create event
+  /// ✅ FIX : aligné sur EventService.createEvent(title, description, category,
+  ///          startDate, endDate, maxCapacity, venueId, isPrivate)
+  /// Les anciens paramètres eventDate/eventEndDate/location/imageUrl → renommés/supprimés
   Future<bool> createEvent({
     required String title,
     required String description,
-    required DateTime eventDate,
-    required DateTime eventEndDate,
-    required String location,
-    String? imageUrl,
     required String category,
-    String? locationDetails,
+    required DateTime startDate,
+    required DateTime endDate,
+    required int maxCapacity,
+    String? venueId,
+    bool isPrivate = false,
   }) async {
     _isLoading = true;
     _error = null;
@@ -139,12 +129,12 @@ class EventProvider extends ChangeNotifier {
       final event = await _eventService.createEvent(
         title: title,
         description: description,
-        eventDate: eventDate,
-        eventEndDate: eventEndDate,
-        location: location,
-        imageUrl: imageUrl,
         category: category,
-        locationDetails: locationDetails,
+        startDate: startDate,
+        endDate: endDate,
+        maxCapacity: maxCapacity,
+        venueId: venueId,
+        isPrivate: isPrivate,
       );
 
       _events.add(event);
@@ -169,7 +159,6 @@ class EventProvider extends ChangeNotifier {
     try {
       await _eventService.addFavorite(eventId);
 
-      // Update local state
       final index = _events.indexWhere((e) => e.id == eventId);
       if (index != -1) {
         _events[index] = _events[index].copyWith(isFavorite: true);
@@ -197,7 +186,6 @@ class EventProvider extends ChangeNotifier {
     try {
       await _eventService.removeFavorite(eventId);
 
-      // Update local state
       final index = _events.indexWhere((e) => e.id == eventId);
       if (index != -1) {
         _events[index] = _events[index].copyWith(isFavorite: false);

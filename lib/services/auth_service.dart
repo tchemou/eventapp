@@ -138,20 +138,18 @@ class AuthService {
   String? getToken() => _prefs.getString(AppConstants.tokenKey);
 
   Future<User> updateProfile({
-    String? firstName,
-    String? lastName,
+    String? fullName,
     String? phoneNumber,
   }) async {
     final data = <String, dynamic>{};
-    if (firstName != null) data['firstName'] = firstName;
-    if (lastName != null) data['lastName'] = lastName;
-    if (phoneNumber != null) data['phoneNumber'] = phoneNumber;
+    if (fullName != null) data['fullName'] = fullName.trim();
+    if (phoneNumber != null) data['phoneNumber'] = phoneNumber.trim();
 
     final response = await _httpService.put<Map<String, dynamic>>(
       ApiConfig.updateUserProfile,
       data: data,
     );
-    return User.fromJson(response);
+    return User.fromJson(response['data'] ?? response);
   }
 }
 

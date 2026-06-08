@@ -25,6 +25,7 @@ class ApiError with _$ApiError {
   const factory ApiError({
     required int statusCode,
     required String message,
+    String? code,
     Map<String, dynamic>? errors,
   }) = _ApiError;
 

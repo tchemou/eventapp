@@ -37,11 +37,19 @@ flutter {
     source = "../.."
 }
 
-// ← Force tous les sous-projets (smart_auth etc.) à compiler en 36
 subprojects {
     afterEvaluate {
         extensions.findByType(com.android.build.gradle.BaseExtension::class.java)?.apply {
             compileSdkVersion(36)
+
+            // ✅ Patch pour flutter_inappwebview : remplace l'ancienne règle Proguard
+            if (name.contains("flutter_inappwebview")) {
+                buildTypes.all {
+                    proguardFiles(
+                        getDefaultProguardFile("proguard-android-optimize.txt")
+                    )
+                }
+            }
         }
     }
 }

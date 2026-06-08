@@ -7,96 +7,117 @@ class OrderService {
 
   OrderService(this._httpService);
 
-  /// Create order
+  /// Créer une commande — POST /client/orders
+  /// Body: { ticketTypeId, quantity, promoCode?, participantName?, isNominal? }
   Future<Order> createOrder({
-    required String eventId,
-    required List<OrderItemRequest> items,
+    required String ticketTypeId,
+    int quantity = 1,
     String? promoCode,
-    String? paymentMethodId,
+    String? participantName,
+    bool isNominal = false,
   }) async {
-    final request = CreateOrderRequest(
-      eventId: eventId,
-      items: items,
-      promoCode: promoCode,
-      paymentMethodId: paymentMethodId,
-    );
-
     final response = await _httpService.post<Map<String, dynamic>>(
-      ApiConfig.createOrder,
-      data: request.toJson(),
-    );
-    return Order.fromJson(response);
-  }
-
-  /// Get all orders
-  Future<List<Order>> getOrders({
-    int page = 0,
-    int pageSize = 10,
-  }) async {
-    final response = await _httpService.get<Map<String, dynamic>>(
-      ApiConfig.getOrders,
-      queryParameters: {
-        'page': page,
-        'pageSize': pageSize,
+      '/client/orders',
+      data: {
+        'ticketTypeId': ticketTypeId,
+        'quantity': quantity,
+        if (promoCode != null) 'promoCode': promoCode,
+        if (participantName != null) 'participantName': participantName,
+        'isNominal': isNominal,
       },
     );
-
-    final orders = (response['content'] as List)
-        .map((e) => Order.fromJson(e as Map<String, dynamic>))
-        .toList();
-    return orders;
+    return Order.fromJson(response['data'] ?? response);
   }
 
-  /// Get my orders
-  Future<List<Order>> getMyOrders({
-    int page = 0,
-    int pageSize = 10,
-  }) async {
-    final response = await _httpService.get<Map<String, dynamic>>(
-      ApiConfig.getMyOrders,
-      queryParameters: {
-        'page': page,
-        'pageSize': pageSize,
-      },
+  /// Confirmer une commande — POST /client/orders/{id}/confirm
+  Future<Order> confirmOrder(String orderId) async {
+    final response = await _httpService.post<Map<String, dynamic>>(
+      '/client/orders/$orderId/confirm',
     );
-
-    final orders = (response['content'] as List)
-        .map((e) => Order.fromJson(e as Map<String, dynamic>))
-        .toList();
-    return orders;
+    return Order.fromJson(response['data'] ?? response);
   }
 
-  /// Get order by ID
+  /// Annuler une commande — DELETE /client/orders/{id}/cancel
+  Future<Order> cancelOrder(String orderId) async {
+    final response = await _httpService.delete(
+      '/client/orders/$orderId/cancel',
+    );
+    return Order.fromJson(
+        (response as Map<String, dynamic>)['data'] ?? response);
+  }
+
+  /// Mes commandes — GET /client/orders
+  Future<List<Order>> getMyOrders() async {
+    final response = await _httpService.get<Map<String, dynamic>>(
+      '/client/orders',
+    );
+    final list = (response['data'] ?? []) as List;
+    return list.map((e) => Order.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
+  /// Détail d'une commande — GET /client/orders/{id}
   Future<Order> getOrderById(String orderId) async {
     final response = await _httpService.get<Map<String, dynamic>>(
-      ApiConfig.getOrderById.replaceAll('{id}', orderId),
+      '/client/orders/$orderId',
     );
-    return Order.fromJson(response);
+    return Order.fromJson(response['data'] ?? response);
   }
 
-  /// Validate promo code
+  /// Valider un code promo — GET /organizer/promo-codes/validate
+  /// ⚠️ Nécessite le rôle ORGANISATEUR côté backend
   Future<Map<String, dynamic>> validatePromoCode({
     required String code,
     required String eventId,
   }) async {
-    final response = await _httpService.post<Map<String, dynamic>>(
-      ApiConfig.validatePromoCode,
-      data: {
-        'code': code,
-        'eventId': eventId,
-      },
+    final response = await _httpService.get<Map<String, dynamic>>(
+      '/organizer/promo-codes/validate',
+      queryParameters: {'code': code, 'eventId': eventId},
     );
-    return response;
+    return response['data'] ?? response;
   }
 
-  /// Get tickets from order
-  Future<List<Ticket>> getTicketsFromOrder(String orderId) async {
-    final response = await _httpService.get<List<dynamic>>(
-      '/orders/$orderId/tickets',
+  /// Mes billets — GET /client/tickets
+  Future<List<Ticket>> getMyTickets() async {
+    final response = await _httpService.get<Map<String, dynamic>>(
+      '/client/tickets',
     );
+    final list = (response['data'] ?? []) as List;
+    return list.map((e) => Ticket.fromJson(e as Map<String, dynamic>)).toList();
+  }
 
-    return (response)
-        .map((e) => Ticket.fromJson(e as Map<String, dynamic>))
-        .toList();
+  /// Détail d'un billet — GET /client/tickets/{id}
+  Future<Ticket> getTicketById(String ticketId) async {
+    final response = await _httpService.get<Map<String, dynamic>>(
+      '/client/tickets/$ticketId',
+    );
+    return Ticket.fromJson(response['data'] ?? response);
+  }
+
+  /// Transférer un billet — POST /client/tickets/{id}/transfer
+  Future<Ticket> transferTicket({
+    required String ticketId,
+    required String newParticipantName,
+  }) async {
+    final response = await _httpService.post<Map<String, dynamic>>(
+      '/client/tickets/$ticketId/transfer',
+      data: {'newParticipantName': newParticipantName},
+    );
+    return Ticket.fromJson(response['data'] ?? response);
+  }
+
+  /// S'inscrire sur liste d'attente — POST /client/waiting-list
+  Future<void> joinWaitingList({
+    required String buyerId,
+    required String ticketTypeId,
+  }) async {
+    await _httpService.post(
+      '/client/waiting-list',
+      data: {'buyerId': buyerId, 'ticketTypeId': ticketTypeId},
+    );
+  }
+
+  /// Se désinscrire de la liste d'attente — DELETE /client/waiting-list/{id}
+  Future<void> leaveWaitingList(String waitingListId) async {
+    await _httpService.delete('/client/waiting-list/$waitingListId');
   }
 }

@@ -48,6 +48,7 @@ _$ApiErrorImpl _$$ApiErrorImplFromJson(Map<String, dynamic> json) =>
     _$ApiErrorImpl(
       statusCode: (json['statusCode'] as num).toInt(),
       message: json['message'] as String,
+      code: json['code'] as String?,
       errors: json['errors'] as Map<String, dynamic>?,
     );
 
@@ -55,6 +56,7 @@ Map<String, dynamic> _$$ApiErrorImplToJson(_$ApiErrorImpl instance) =>
     <String, dynamic>{
       'statusCode': instance.statusCode,
       'message': instance.message,
+      'code': instance.code,
       'errors': instance.errors,
     };
 

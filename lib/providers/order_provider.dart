@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../models/order.dart';
-import '../models/api_response.dart';
 import '../services/order_service.dart';
 
 class OrderProvider extends ChangeNotifier {
@@ -8,180 +7,134 @@ class OrderProvider extends ChangeNotifier {
 
   OrderProvider(this._orderService);
 
-  List<Order> _orders = [];
   List<Order> _myOrders = [];
   Order? _currentOrder;
+  Order? _lastCreatedOrder; // ✅ ajout pour Flutterwave
   bool _isLoading = false;
   String? _error;
   Map<String, dynamic>? _promoValidation;
 
-  // Getters
-  List<Order> get orders => _orders;
   List<Order> get myOrders => _myOrders;
   Order? get currentOrder => _currentOrder;
+  Order? get lastCreatedOrder => _lastCreatedOrder; // ✅
   bool get isLoading => _isLoading;
   String? get error => _error;
   Map<String, dynamic>? get promoValidation => _promoValidation;
 
-  /// Create order
+  /// Créer une commande
   Future<bool> createOrder({
-    required String eventId,
-    required List<OrderItemRequest> items,
+    required String ticketTypeId,
+    int quantity = 1,
     String? promoCode,
-    String? paymentMethodId,
+    String? participantName,
   }) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-
+    _setLoading(true);
     try {
       _currentOrder = await _orderService.createOrder(
-        eventId: eventId,
-        items: items,
+        ticketTypeId: ticketTypeId,
+        quantity: quantity,
         promoCode: promoCode,
-        paymentMethodId: paymentMethodId,
+        participantName: participantName,
       );
-
+      _lastCreatedOrder = _currentOrder; // ✅
       _myOrders.insert(0, _currentOrder!);
       notifyListeners();
       return true;
-    } on ApiError catch (e) {
-      _error = e.message;
-      notifyListeners();
-      return false;
     } catch (e) {
-      _error = e.toString();
-      notifyListeners();
+      _setError(e.toString());
       return false;
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      _setLoading(false);
     }
   }
 
-  /// Get all orders
-  Future<bool> getOrders({
-    int page = 0,
-    int pageSize = 10,
-  }) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-
+  /// ✅ Confirmer une commande après paiement Flutterwave
+  Future<bool> confirmOrder(String orderId) async {
+    _setLoading(true);
     try {
-      _orders = await _orderService.getOrders(
-        page: page,
-        pageSize: pageSize,
-      );
-
+      final confirmed = await _orderService.confirmOrder(orderId);
+      // Met à jour la commande dans la liste
+      final index = _myOrders.indexWhere((o) => o.id == orderId);
+      if (index != -1) {
+        _myOrders[index] = confirmed;
+      }
+      _currentOrder = confirmed;
       notifyListeners();
       return true;
-    } on ApiError catch (e) {
-      _error = e.message;
-      notifyListeners();
-      return false;
     } catch (e) {
-      _error = e.toString();
-      notifyListeners();
+      _setError(e.toString());
       return false;
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      _setLoading(false);
     }
   }
 
-  /// Get my orders
-  Future<bool> getMyOrders({
-    int page = 0,
-    int pageSize = 10,
-  }) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-
+  /// Mes commandes
+  Future<bool> getMyOrders() async {
+    _setLoading(true);
     try {
-      _myOrders = await _orderService.getMyOrders(
-        page: page,
-        pageSize: pageSize,
-      );
-
+      _myOrders = await _orderService.getMyOrders();
       notifyListeners();
       return true;
-    } on ApiError catch (e) {
-      _error = e.message;
-      notifyListeners();
-      return false;
     } catch (e) {
-      _error = e.toString();
-      notifyListeners();
+      _setError(e.toString());
       return false;
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      _setLoading(false);
     }
   }
 
-  /// Get order by ID
+  /// Détail d'une commande
   Future<bool> getOrderById(String orderId) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-
+    _setLoading(true);
     try {
       _currentOrder = await _orderService.getOrderById(orderId);
       notifyListeners();
       return true;
-    } on ApiError catch (e) {
-      _error = e.message;
-      notifyListeners();
-      return false;
     } catch (e) {
-      _error = e.toString();
-      notifyListeners();
+      _setError(e.toString());
       return false;
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      _setLoading(false);
     }
   }
 
-  /// Validate promo code
+  /// Valider un code promo
   Future<bool> validatePromoCode({
     required String code,
     required String eventId,
   }) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-
+    _setLoading(true);
     try {
       _promoValidation = await _orderService.validatePromoCode(
         code: code,
         eventId: eventId,
       );
-
       notifyListeners();
       return true;
-    } on ApiError catch (e) {
-      _error = e.message;
-      _promoValidation = null;
-      notifyListeners();
-      return false;
     } catch (e) {
-      _error = e.toString();
+      _setError(e.toString());
       _promoValidation = null;
-      notifyListeners();
       return false;
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      _setLoading(false);
     }
   }
 
-  /// Clear current order
   void clearCurrentOrder() {
     _currentOrder = null;
+    _lastCreatedOrder = null;
     _promoValidation = null;
+    notifyListeners();
+  }
+
+  void _setLoading(bool v) {
+    _isLoading = v;
+    notifyListeners();
+  }
+
+  void _setError(String msg) {
+    _error = msg;
     notifyListeners();
   }
 }

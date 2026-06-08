@@ -1,6 +1,4 @@
-import '../config/api_config.dart';
 import '../models/event.dart';
-import '../models/api_response.dart';
 import 'http_service.dart';
 
 class EventService {
@@ -8,207 +6,178 @@ class EventService {
 
   EventService(this._httpService);
 
-  /// Get all events
+  /// Liste des événements — GET /events
+  /// ✅ Paramètres réels selon l'API : status, organizerId, title
   Future<List<Event>> getEvents({
-    int page = 0,
-    int pageSize = 10,
-    String? category,
-    String? search,
+    String? status,
+    String? title,
+    String? category, // ⚠️ non supporté par l'API, ignoré côté serveur
   }) async {
     final response = await _httpService.get<Map<String, dynamic>>(
-      ApiConfig.getEvents,
+      '/events',
       queryParameters: {
-        'page': page,
-        'pageSize': pageSize,
-        if (category != null) 'category': category,
-        if (search != null) 'search': search,
+        if (status != null) 'status': status,
+        if (title != null) 'title': title,
       },
     );
 
-    final events = (response['content'] as List)
-        .map((e) => Event.fromJson(e as Map<String, dynamic>))
-        .toList();
-    return events;
+    final list = (response['data'] ?? []) as List;
+    return list.map((e) => Event.fromJson(e as Map<String, dynamic>)).toList();
   }
 
-  /// Get event by ID
+  /// Détail d'un événement — GET /events/{id}
   Future<Event> getEventById(String eventId) async {
     final response = await _httpService.get<Map<String, dynamic>>(
-      ApiConfig.getEventById.replaceAll('{id}', eventId),
+      '/events/$eventId',
     );
-    return Event.fromJson(response);
+    return Event.fromJson(response['data'] ?? response);
   }
 
-  /// Search events
-  Future<List<Event>> searchEvents({
-    required String query,
-    String? category,
-    DateTime? startDate,
-    DateTime? endDate,
-    String? location,
-  }) async {
+  /// Recherche d'événements — GET /events?title=...
+  /// ✅ L'API filtre par title, pas par query séparé
+  Future<List<Event>> searchEvents({required String query}) async {
     final response = await _httpService.get<Map<String, dynamic>>(
-      ApiConfig.searchEvents,
-      queryParameters: {
-        'query': query,
-        if (category != null) 'category': category,
-        if (startDate != null) 'startDate': startDate.toIso8601String(),
-        if (endDate != null) 'endDate': endDate.toIso8601String(),
-        if (location != null) 'location': location,
-      },
+      '/events',
+      queryParameters: {'title': query},
     );
 
-    final events = (response['content'] as List)
-        .map((e) => Event.fromJson(e as Map<String, dynamic>))
-        .toList();
-    return events;
+    final list = (response['data'] ?? []) as List;
+    return list.map((e) => Event.fromJson(e as Map<String, dynamic>)).toList();
   }
 
-  /// Create event
-  Future<Event> createEvent({
-    required String title,
-    required String description,
-    required DateTime eventDate,
-    required DateTime eventEndDate,
-    required String location,
-    String? imageUrl,
-    required String category,
-    String? locationDetails,
-  }) async {
-    final data = {
-      'title': title,
-      'description': description,
-      'eventDate': eventDate.toIso8601String(),
-      'eventEndDate': eventEndDate.toIso8601String(),
-      'location': location,
-      'category': category,
-      if (imageUrl != null) 'imageUrl': imageUrl,
-      if (locationDetails != null) 'locationDetails': locationDetails,
-    };
-
-    final response = await _httpService.post<Map<String, dynamic>>(
-      ApiConfig.createEvent,
-      data: data,
-    );
-    return Event.fromJson(response);
-  }
-
-  /// Update event
-  Future<Event> updateEvent(
-    String eventId, {
-    String? title,
-    String? description,
-    DateTime? eventDate,
-    DateTime? eventEndDate,
-    String? location,
-    String? imageUrl,
-    String? category,
-  }) async {
-    final data = <String, dynamic>{};
-    if (title != null) data['title'] = title;
-    if (description != null) data['description'] = description;
-    if (eventDate != null) data['eventDate'] = eventDate.toIso8601String();
-    if (eventEndDate != null)
-      data['eventEndDate'] = eventEndDate.toIso8601String();
-    if (location != null) data['location'] = location;
-    if (imageUrl != null) data['imageUrl'] = imageUrl;
-    if (category != null) data['category'] = category;
-
-    final response = await _httpService.put<Map<String, dynamic>>(
-      ApiConfig.updateEvent.replaceAll('{id}', eventId),
-      data: data,
-    );
-    return Event.fromJson(response);
-  }
-
-  /// Delete event
-  Future<void> deleteEvent(String eventId) async {
-    await _httpService.delete(
-      ApiConfig.deleteEvent.replaceAll('{id}', eventId),
-    );
-  }
-
-  /// Add event to favorites
-  Future<void> addFavorite(String eventId) async {
-    await _httpService.post(
-      ApiConfig.addFavorite,
-      data: {'eventId': eventId},
-    );
-  }
-
-  /// Remove event from favorites
-  Future<void> removeFavorite(String eventId) async {
-    await _httpService.delete(
-      ApiConfig.removeFavorite.replaceAll('{eventId}', eventId),
-    );
-  }
-
-  /// Get favorite events
-  Future<List<Event>> getFavorites() async {
-    final response = await _httpService.get<Map<String, dynamic>>(
-      ApiConfig.getFavorites,
-    );
-
-    final events = (response['content'] as List)
-        .map((e) => Event.fromJson(e as Map<String, dynamic>))
-        .toList();
-    return events;
-  }
-
-  /// Get ticket types for event
+  /// Types de billets d'un événement — GET /ticket-types/event/{eventId}
+  /// ✅ Endpoint public, pas besoin d'auth
   Future<List<TicketType>> getTicketTypes(String eventId) async {
-    final response = await _httpService.get<List<dynamic>>(
-      ApiConfig.getTicketTypes.replaceAll('{eventId}', eventId),
+    final response = await _httpService.get<Map<String, dynamic>>(
+      '/ticket-types/event/$eventId',
     );
-
-    return (response)
+    final list = (response['data'] ?? []) as List;
+    return list
         .map((e) => TicketType.fromJson(e as Map<String, dynamic>))
         .toList();
   }
 
-  /// Create ticket type
-  Future<TicketType> createTicketType(
-    String eventId, {
-    required String name,
+  /// Ajouter aux favoris — POST /client/favorites/{evenementId}
+  Future<void> addFavorite(String eventId) async {
+    await _httpService.post('/client/favorites/$eventId');
+  }
+
+  /// Retirer des favoris — DELETE /client/favorites/{evenementId}
+  Future<void> removeFavorite(String eventId) async {
+    await _httpService.delete('/client/favorites/$eventId');
+  }
+
+  /// Liste des favoris — GET /client/favorites
+  Future<List<Event>> getFavorites() async {
+    final response = await _httpService.get<Map<String, dynamic>>(
+      '/client/favorites',
+    );
+    final list = (response['data'] ?? []) as List;
+    return list.map((e) => Event.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
+  // ── Endpoints ORGANISATEUR ───────────────────────────────────────────────
+
+  /// Créer un événement — POST /organizer/events (multipart)
+  Future<Event> createEvent({
+    required String title,
     required String description,
-    required double price,
-    required int quantity,
+    required String category,
+    required DateTime startDate,
+    required DateTime endDate,
+    required int maxCapacity,
+    String? venueId,
+    bool isPrivate = false,
   }) async {
     final data = {
-      'name': name,
+      'title': title,
       'description': description,
-      'price': price,
-      'quantity': quantity,
+      'category': category,
+      'startDate': startDate.toIso8601String(),
+      'endDate': endDate.toIso8601String(),
+      'maxCapacity': maxCapacity,
+      if (venueId != null) 'venueId': venueId,
+      'isPrivate': isPrivate,
     };
 
     final response = await _httpService.post<Map<String, dynamic>>(
-      ApiConfig.createTicketType.replaceAll('{eventId}', eventId),
+      '/organizer/events',
       data: data,
     );
-    return TicketType.fromJson(response);
+    return Event.fromJson(response['data'] ?? response);
   }
 
-  /// Update ticket type
-  Future<TicketType> updateTicketType(
-    String eventId,
-    String ticketTypeId, {
-    String? name,
-    String? description,
-    double? price,
-    int? quantity,
-  }) async {
+  /// Modifier un événement — PUT /organizer/events/{id}
+  Future<Event> updateEvent(String eventId,
+      {String? title,
+      String? description,
+      String? category,
+      DateTime? startDate,
+      DateTime? endDate,
+      int? maxCapacity}) async {
     final data = <String, dynamic>{};
-    if (name != null) data['name'] = name;
+    if (title != null) data['title'] = title;
     if (description != null) data['description'] = description;
-    if (price != null) data['price'] = price;
-    if (quantity != null) data['quantity'] = quantity;
+    if (category != null) data['category'] = category;
+    if (startDate != null) data['startDate'] = startDate.toIso8601String();
+    if (endDate != null) data['endDate'] = endDate.toIso8601String();
+    if (maxCapacity != null) data['maxCapacity'] = maxCapacity;
 
     final response = await _httpService.put<Map<String, dynamic>>(
-      ApiConfig.updateTicketType
-          .replaceAll('{eventId}', eventId)
-          .replaceAll('{id}', ticketTypeId),
+      '/organizer/events/$eventId',
       data: data,
     );
-    return TicketType.fromJson(response);
+    return Event.fromJson(response['data'] ?? response);
+  }
+
+  /// Publier un événement — POST /organizer/events/{id}/publish
+  Future<Event> publishEvent(String eventId) async {
+    final response = await _httpService.post<Map<String, dynamic>>(
+      '/organizer/events/$eventId/publish',
+    );
+    return Event.fromJson(response['data'] ?? response);
+  }
+
+  /// Annuler un événement — POST /organizer/events/{id}/cancel
+  Future<Event> cancelEvent(String eventId) async {
+    final response = await _httpService.post<Map<String, dynamic>>(
+      '/organizer/events/$eventId/cancel',
+    );
+    return Event.fromJson(response['data'] ?? response);
+  }
+
+  /// Supprimer un événement — DELETE /organizer/events/{id}
+  Future<void> deleteEvent(String eventId) async {
+    await _httpService.delete('/organizer/events/$eventId');
+  }
+
+  /// Créer un type de billet — POST /organizer/ticket-types
+  Future<TicketType> createTicketType({
+    required String eventId,
+    required String name,
+    required double price,
+    required int availableQuantity,
+    bool isFree = false,
+    bool isVisible = true,
+    int? limitPerPerson,
+    DateTime? saleStartDate,
+    DateTime? saleEndDate,
+  }) async {
+    final response = await _httpService.post<Map<String, dynamic>>(
+      '/organizer/ticket-types',
+      data: {
+        'eventId': eventId,
+        'name': name,
+        'price': price,
+        'availableQuantity': availableQuantity,
+        'isFree': isFree,
+        'isVisible': isVisible,
+        if (limitPerPerson != null) 'limitPerPerson': limitPerPerson,
+        if (saleStartDate != null)
+          'saleStartDate': saleStartDate.toIso8601String(),
+        if (saleEndDate != null) 'saleEndDate': saleEndDate.toIso8601String(),
+      },
+    );
+    return TicketType.fromJson(response['data'] ?? response);
   }
 }
