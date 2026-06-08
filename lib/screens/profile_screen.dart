@@ -74,28 +74,10 @@ class ProfileScreen extends StatelessWidget {
             ),
             _ProfileTile(
               icon: Icons.confirmation_number_outlined,
-              title: 'Mes commandes',
-              onTap: () {},
-            ),
-            _ProfileTile(
-              icon: Icons.notifications_outlined,
-              title: 'Notifications',
-              onTap: () {},
-            ),
-            _ProfileTile(
-              icon: Icons.security,
-              title: 'Sécurité',
-              onTap: () {},
-            ),
-            _ProfileTile(
-              icon: Icons.help_outline,
-              title: 'Centre d\'aide',
-              onTap: () {},
-            ),
-            _ProfileTile(
-              icon: Icons.info_outline,
-              title: 'À propos',
-              onTap: () {},
+              title: 'Mes billets',
+              onTap: () {
+                // TODO: Naviguer vers la liste des billets/commandes de l'utilisateur
+              },
             ),
 
             const SizedBox(height: 16),
