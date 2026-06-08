@@ -21,17 +21,15 @@ Order _$OrderFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Order {
   String get id => throw _privateConstructorUsedError;
-  String get eventId => throw _privateConstructorUsedError;
-  String get buyerId => throw _privateConstructorUsedError;
-  List<OrderItem> get items => throw _privateConstructorUsedError;
-  double get totalPrice => throw _privateConstructorUsedError;
-  String get status => throw _privateConstructorUsedError;
-  String? get promoCode => throw _privateConstructorUsedError;
-  double? get discountAmount => throw _privateConstructorUsedError;
-  String? get paymentMethod => throw _privateConstructorUsedError;
-  String? get paymentReference => throw _privateConstructorUsedError;
+  @JsonKey(name: 'totalAmount')
+  double? get totalAmount => throw _privateConstructorUsedError;
+  String? get status => throw _privateConstructorUsedError;
+  @JsonKey(name: 'orderDate')
   DateTime? get createdAt => throw _privateConstructorUsedError;
-  DateTime? get updatedAt => throw _privateConstructorUsedError;
+  BuyerProfile? get buyer => throw _privateConstructorUsedError;
+  List<Ticket>? get tickets => throw _privateConstructorUsedError;
+  PaymentInfo? get payment => throw _privateConstructorUsedError;
+  String? get appliedPromoCode => throw _privateConstructorUsedError;
 
   /// Serializes this Order to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -49,17 +47,16 @@ abstract class $OrderCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
-      String eventId,
-      String buyerId,
-      List<OrderItem> items,
-      double totalPrice,
-      String status,
-      String? promoCode,
-      double? discountAmount,
-      String? paymentMethod,
-      String? paymentReference,
-      DateTime? createdAt,
-      DateTime? updatedAt});
+      @JsonKey(name: 'totalAmount') double? totalAmount,
+      String? status,
+      @JsonKey(name: 'orderDate') DateTime? createdAt,
+      BuyerProfile? buyer,
+      List<Ticket>? tickets,
+      PaymentInfo? payment,
+      String? appliedPromoCode});
+
+  $BuyerProfileCopyWith<$Res>? get buyer;
+  $PaymentInfoCopyWith<$Res>? get payment;
 }
 
 /// @nodoc
@@ -78,68 +75,76 @@ class _$OrderCopyWithImpl<$Res, $Val extends Order>
   @override
   $Res call({
     Object? id = null,
-    Object? eventId = null,
-    Object? buyerId = null,
-    Object? items = null,
-    Object? totalPrice = null,
-    Object? status = null,
-    Object? promoCode = freezed,
-    Object? discountAmount = freezed,
-    Object? paymentMethod = freezed,
-    Object? paymentReference = freezed,
+    Object? totalAmount = freezed,
+    Object? status = freezed,
     Object? createdAt = freezed,
-    Object? updatedAt = freezed,
+    Object? buyer = freezed,
+    Object? tickets = freezed,
+    Object? payment = freezed,
+    Object? appliedPromoCode = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      eventId: null == eventId
-          ? _value.eventId
-          : eventId // ignore: cast_nullable_to_non_nullable
-              as String,
-      buyerId: null == buyerId
-          ? _value.buyerId
-          : buyerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      items: null == items
-          ? _value.items
-          : items // ignore: cast_nullable_to_non_nullable
-              as List<OrderItem>,
-      totalPrice: null == totalPrice
-          ? _value.totalPrice
-          : totalPrice // ignore: cast_nullable_to_non_nullable
-              as double,
-      status: null == status
+      totalAmount: freezed == totalAmount
+          ? _value.totalAmount
+          : totalAmount // ignore: cast_nullable_to_non_nullable
+              as double?,
+      status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      promoCode: freezed == promoCode
-          ? _value.promoCode
-          : promoCode // ignore: cast_nullable_to_non_nullable
-              as String?,
-      discountAmount: freezed == discountAmount
-          ? _value.discountAmount
-          : discountAmount // ignore: cast_nullable_to_non_nullable
-              as double?,
-      paymentMethod: freezed == paymentMethod
-          ? _value.paymentMethod
-          : paymentMethod // ignore: cast_nullable_to_non_nullable
-              as String?,
-      paymentReference: freezed == paymentReference
-          ? _value.paymentReference
-          : paymentReference // ignore: cast_nullable_to_non_nullable
               as String?,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
+      buyer: freezed == buyer
+          ? _value.buyer
+          : buyer // ignore: cast_nullable_to_non_nullable
+              as BuyerProfile?,
+      tickets: freezed == tickets
+          ? _value.tickets
+          : tickets // ignore: cast_nullable_to_non_nullable
+              as List<Ticket>?,
+      payment: freezed == payment
+          ? _value.payment
+          : payment // ignore: cast_nullable_to_non_nullable
+              as PaymentInfo?,
+      appliedPromoCode: freezed == appliedPromoCode
+          ? _value.appliedPromoCode
+          : appliedPromoCode // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
+  }
+
+  /// Create a copy of Order
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $BuyerProfileCopyWith<$Res>? get buyer {
+    if (_value.buyer == null) {
+      return null;
+    }
+
+    return $BuyerProfileCopyWith<$Res>(_value.buyer!, (value) {
+      return _then(_value.copyWith(buyer: value) as $Val);
+    });
+  }
+
+  /// Create a copy of Order
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PaymentInfoCopyWith<$Res>? get payment {
+    if (_value.payment == null) {
+      return null;
+    }
+
+    return $PaymentInfoCopyWith<$Res>(_value.payment!, (value) {
+      return _then(_value.copyWith(payment: value) as $Val);
+    });
   }
 }
 
@@ -152,17 +157,18 @@ abstract class _$$OrderImplCopyWith<$Res> implements $OrderCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
-      String eventId,
-      String buyerId,
-      List<OrderItem> items,
-      double totalPrice,
-      String status,
-      String? promoCode,
-      double? discountAmount,
-      String? paymentMethod,
-      String? paymentReference,
-      DateTime? createdAt,
-      DateTime? updatedAt});
+      @JsonKey(name: 'totalAmount') double? totalAmount,
+      String? status,
+      @JsonKey(name: 'orderDate') DateTime? createdAt,
+      BuyerProfile? buyer,
+      List<Ticket>? tickets,
+      PaymentInfo? payment,
+      String? appliedPromoCode});
+
+  @override
+  $BuyerProfileCopyWith<$Res>? get buyer;
+  @override
+  $PaymentInfoCopyWith<$Res>? get payment;
 }
 
 /// @nodoc
@@ -179,67 +185,47 @@ class __$$OrderImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? eventId = null,
-    Object? buyerId = null,
-    Object? items = null,
-    Object? totalPrice = null,
-    Object? status = null,
-    Object? promoCode = freezed,
-    Object? discountAmount = freezed,
-    Object? paymentMethod = freezed,
-    Object? paymentReference = freezed,
+    Object? totalAmount = freezed,
+    Object? status = freezed,
     Object? createdAt = freezed,
-    Object? updatedAt = freezed,
+    Object? buyer = freezed,
+    Object? tickets = freezed,
+    Object? payment = freezed,
+    Object? appliedPromoCode = freezed,
   }) {
     return _then(_$OrderImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      eventId: null == eventId
-          ? _value.eventId
-          : eventId // ignore: cast_nullable_to_non_nullable
-              as String,
-      buyerId: null == buyerId
-          ? _value.buyerId
-          : buyerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      items: null == items
-          ? _value._items
-          : items // ignore: cast_nullable_to_non_nullable
-              as List<OrderItem>,
-      totalPrice: null == totalPrice
-          ? _value.totalPrice
-          : totalPrice // ignore: cast_nullable_to_non_nullable
-              as double,
-      status: null == status
+      totalAmount: freezed == totalAmount
+          ? _value.totalAmount
+          : totalAmount // ignore: cast_nullable_to_non_nullable
+              as double?,
+      status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      promoCode: freezed == promoCode
-          ? _value.promoCode
-          : promoCode // ignore: cast_nullable_to_non_nullable
-              as String?,
-      discountAmount: freezed == discountAmount
-          ? _value.discountAmount
-          : discountAmount // ignore: cast_nullable_to_non_nullable
-              as double?,
-      paymentMethod: freezed == paymentMethod
-          ? _value.paymentMethod
-          : paymentMethod // ignore: cast_nullable_to_non_nullable
-              as String?,
-      paymentReference: freezed == paymentReference
-          ? _value.paymentReference
-          : paymentReference // ignore: cast_nullable_to_non_nullable
               as String?,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
+      buyer: freezed == buyer
+          ? _value.buyer
+          : buyer // ignore: cast_nullable_to_non_nullable
+              as BuyerProfile?,
+      tickets: freezed == tickets
+          ? _value._tickets
+          : tickets // ignore: cast_nullable_to_non_nullable
+              as List<Ticket>?,
+      payment: freezed == payment
+          ? _value.payment
+          : payment // ignore: cast_nullable_to_non_nullable
+              as PaymentInfo?,
+      appliedPromoCode: freezed == appliedPromoCode
+          ? _value.appliedPromoCode
+          : appliedPromoCode // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -249,18 +235,14 @@ class __$$OrderImplCopyWithImpl<$Res>
 class _$OrderImpl implements _Order {
   const _$OrderImpl(
       {required this.id,
-      required this.eventId,
-      required this.buyerId,
-      required final List<OrderItem> items,
-      required this.totalPrice,
-      required this.status,
-      this.promoCode,
-      this.discountAmount,
-      this.paymentMethod,
-      this.paymentReference,
-      this.createdAt,
-      this.updatedAt})
-      : _items = items;
+      @JsonKey(name: 'totalAmount') this.totalAmount,
+      this.status,
+      @JsonKey(name: 'orderDate') this.createdAt,
+      this.buyer,
+      final List<Ticket>? tickets,
+      this.payment,
+      this.appliedPromoCode})
+      : _tickets = tickets;
 
   factory _$OrderImpl.fromJson(Map<String, dynamic> json) =>
       _$$OrderImplFromJson(json);
@@ -268,37 +250,33 @@ class _$OrderImpl implements _Order {
   @override
   final String id;
   @override
-  final String eventId;
+  @JsonKey(name: 'totalAmount')
+  final double? totalAmount;
   @override
-  final String buyerId;
-  final List<OrderItem> _items;
+  final String? status;
   @override
-  List<OrderItem> get items {
-    if (_items is EqualUnmodifiableListView) return _items;
+  @JsonKey(name: 'orderDate')
+  final DateTime? createdAt;
+  @override
+  final BuyerProfile? buyer;
+  final List<Ticket>? _tickets;
+  @override
+  List<Ticket>? get tickets {
+    final value = _tickets;
+    if (value == null) return null;
+    if (_tickets is EqualUnmodifiableListView) return _tickets;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_items);
+    return EqualUnmodifiableListView(value);
   }
 
   @override
-  final double totalPrice;
+  final PaymentInfo? payment;
   @override
-  final String status;
-  @override
-  final String? promoCode;
-  @override
-  final double? discountAmount;
-  @override
-  final String? paymentMethod;
-  @override
-  final String? paymentReference;
-  @override
-  final DateTime? createdAt;
-  @override
-  final DateTime? updatedAt;
+  final String? appliedPromoCode;
 
   @override
   String toString() {
-    return 'Order(id: $id, eventId: $eventId, buyerId: $buyerId, items: $items, totalPrice: $totalPrice, status: $status, promoCode: $promoCode, discountAmount: $discountAmount, paymentMethod: $paymentMethod, paymentReference: $paymentReference, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'Order(id: $id, totalAmount: $totalAmount, status: $status, createdAt: $createdAt, buyer: $buyer, tickets: $tickets, payment: $payment, appliedPromoCode: $appliedPromoCode)';
   }
 
   @override
@@ -307,24 +285,16 @@ class _$OrderImpl implements _Order {
         (other.runtimeType == runtimeType &&
             other is _$OrderImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.eventId, eventId) || other.eventId == eventId) &&
-            (identical(other.buyerId, buyerId) || other.buyerId == buyerId) &&
-            const DeepCollectionEquality().equals(other._items, _items) &&
-            (identical(other.totalPrice, totalPrice) ||
-                other.totalPrice == totalPrice) &&
+            (identical(other.totalAmount, totalAmount) ||
+                other.totalAmount == totalAmount) &&
             (identical(other.status, status) || other.status == status) &&
-            (identical(other.promoCode, promoCode) ||
-                other.promoCode == promoCode) &&
-            (identical(other.discountAmount, discountAmount) ||
-                other.discountAmount == discountAmount) &&
-            (identical(other.paymentMethod, paymentMethod) ||
-                other.paymentMethod == paymentMethod) &&
-            (identical(other.paymentReference, paymentReference) ||
-                other.paymentReference == paymentReference) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
-            (identical(other.updatedAt, updatedAt) ||
-                other.updatedAt == updatedAt));
+            (identical(other.buyer, buyer) || other.buyer == buyer) &&
+            const DeepCollectionEquality().equals(other._tickets, _tickets) &&
+            (identical(other.payment, payment) || other.payment == payment) &&
+            (identical(other.appliedPromoCode, appliedPromoCode) ||
+                other.appliedPromoCode == appliedPromoCode));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -332,17 +302,13 @@ class _$OrderImpl implements _Order {
   int get hashCode => Object.hash(
       runtimeType,
       id,
-      eventId,
-      buyerId,
-      const DeepCollectionEquality().hash(_items),
-      totalPrice,
+      totalAmount,
       status,
-      promoCode,
-      discountAmount,
-      paymentMethod,
-      paymentReference,
       createdAt,
-      updatedAt);
+      buyer,
+      const DeepCollectionEquality().hash(_tickets),
+      payment,
+      appliedPromoCode);
 
   /// Create a copy of Order
   /// with the given fields replaced by the non-null parameter values.
@@ -363,44 +329,34 @@ class _$OrderImpl implements _Order {
 abstract class _Order implements Order {
   const factory _Order(
       {required final String id,
-      required final String eventId,
-      required final String buyerId,
-      required final List<OrderItem> items,
-      required final double totalPrice,
-      required final String status,
-      final String? promoCode,
-      final double? discountAmount,
-      final String? paymentMethod,
-      final String? paymentReference,
-      final DateTime? createdAt,
-      final DateTime? updatedAt}) = _$OrderImpl;
+      @JsonKey(name: 'totalAmount') final double? totalAmount,
+      final String? status,
+      @JsonKey(name: 'orderDate') final DateTime? createdAt,
+      final BuyerProfile? buyer,
+      final List<Ticket>? tickets,
+      final PaymentInfo? payment,
+      final String? appliedPromoCode}) = _$OrderImpl;
 
   factory _Order.fromJson(Map<String, dynamic> json) = _$OrderImpl.fromJson;
 
   @override
   String get id;
   @override
-  String get eventId;
+  @JsonKey(name: 'totalAmount')
+  double? get totalAmount;
   @override
-  String get buyerId;
+  String? get status;
   @override
-  List<OrderItem> get items;
-  @override
-  double get totalPrice;
-  @override
-  String get status;
-  @override
-  String? get promoCode;
-  @override
-  double? get discountAmount;
-  @override
-  String? get paymentMethod;
-  @override
-  String? get paymentReference;
-  @override
+  @JsonKey(name: 'orderDate')
   DateTime? get createdAt;
   @override
-  DateTime? get updatedAt;
+  BuyerProfile? get buyer;
+  @override
+  List<Ticket>? get tickets;
+  @override
+  PaymentInfo? get payment;
+  @override
+  String? get appliedPromoCode;
 
   /// Create a copy of Order
   /// with the given fields replaced by the non-null parameter values.
@@ -410,220 +366,518 @@ abstract class _Order implements Order {
       throw _privateConstructorUsedError;
 }
 
-OrderItem _$OrderItemFromJson(Map<String, dynamic> json) {
-  return _OrderItem.fromJson(json);
+BuyerProfile _$BuyerProfileFromJson(Map<String, dynamic> json) {
+  return _BuyerProfile.fromJson(json);
 }
 
 /// @nodoc
-mixin _$OrderItem {
-  String get ticketTypeId => throw _privateConstructorUsedError;
-  String get ticketTypeName => throw _privateConstructorUsedError;
-  int get quantity => throw _privateConstructorUsedError;
-  double get unitPrice => throw _privateConstructorUsedError;
+mixin _$BuyerProfile {
+  String? get fullName => throw _privateConstructorUsedError;
+  String? get email => throw _privateConstructorUsedError;
+  String? get phoneNumber => throw _privateConstructorUsedError;
+  String? get city => throw _privateConstructorUsedError;
+  String? get neighborhood => throw _privateConstructorUsedError;
 
-  /// Serializes this OrderItem to a JSON map.
+  /// Serializes this BuyerProfile to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
-  /// Create a copy of OrderItem
+  /// Create a copy of BuyerProfile
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $OrderItemCopyWith<OrderItem> get copyWith =>
+  $BuyerProfileCopyWith<BuyerProfile> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $OrderItemCopyWith<$Res> {
-  factory $OrderItemCopyWith(OrderItem value, $Res Function(OrderItem) then) =
-      _$OrderItemCopyWithImpl<$Res, OrderItem>;
+abstract class $BuyerProfileCopyWith<$Res> {
+  factory $BuyerProfileCopyWith(
+          BuyerProfile value, $Res Function(BuyerProfile) then) =
+      _$BuyerProfileCopyWithImpl<$Res, BuyerProfile>;
   @useResult
   $Res call(
-      {String ticketTypeId,
-      String ticketTypeName,
-      int quantity,
-      double unitPrice});
+      {String? fullName,
+      String? email,
+      String? phoneNumber,
+      String? city,
+      String? neighborhood});
 }
 
 /// @nodoc
-class _$OrderItemCopyWithImpl<$Res, $Val extends OrderItem>
-    implements $OrderItemCopyWith<$Res> {
-  _$OrderItemCopyWithImpl(this._value, this._then);
+class _$BuyerProfileCopyWithImpl<$Res, $Val extends BuyerProfile>
+    implements $BuyerProfileCopyWith<$Res> {
+  _$BuyerProfileCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of OrderItem
+  /// Create a copy of BuyerProfile
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? ticketTypeId = null,
-    Object? ticketTypeName = null,
-    Object? quantity = null,
-    Object? unitPrice = null,
+    Object? fullName = freezed,
+    Object? email = freezed,
+    Object? phoneNumber = freezed,
+    Object? city = freezed,
+    Object? neighborhood = freezed,
   }) {
     return _then(_value.copyWith(
-      ticketTypeId: null == ticketTypeId
-          ? _value.ticketTypeId
-          : ticketTypeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      ticketTypeName: null == ticketTypeName
-          ? _value.ticketTypeName
-          : ticketTypeName // ignore: cast_nullable_to_non_nullable
-              as String,
-      quantity: null == quantity
-          ? _value.quantity
-          : quantity // ignore: cast_nullable_to_non_nullable
-              as int,
-      unitPrice: null == unitPrice
-          ? _value.unitPrice
-          : unitPrice // ignore: cast_nullable_to_non_nullable
-              as double,
+      fullName: freezed == fullName
+          ? _value.fullName
+          : fullName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      email: freezed == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String?,
+      phoneNumber: freezed == phoneNumber
+          ? _value.phoneNumber
+          : phoneNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      city: freezed == city
+          ? _value.city
+          : city // ignore: cast_nullable_to_non_nullable
+              as String?,
+      neighborhood: freezed == neighborhood
+          ? _value.neighborhood
+          : neighborhood // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$OrderItemImplCopyWith<$Res>
-    implements $OrderItemCopyWith<$Res> {
-  factory _$$OrderItemImplCopyWith(
-          _$OrderItemImpl value, $Res Function(_$OrderItemImpl) then) =
-      __$$OrderItemImplCopyWithImpl<$Res>;
+abstract class _$$BuyerProfileImplCopyWith<$Res>
+    implements $BuyerProfileCopyWith<$Res> {
+  factory _$$BuyerProfileImplCopyWith(
+          _$BuyerProfileImpl value, $Res Function(_$BuyerProfileImpl) then) =
+      __$$BuyerProfileImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
-      {String ticketTypeId,
-      String ticketTypeName,
-      int quantity,
-      double unitPrice});
+      {String? fullName,
+      String? email,
+      String? phoneNumber,
+      String? city,
+      String? neighborhood});
 }
 
 /// @nodoc
-class __$$OrderItemImplCopyWithImpl<$Res>
-    extends _$OrderItemCopyWithImpl<$Res, _$OrderItemImpl>
-    implements _$$OrderItemImplCopyWith<$Res> {
-  __$$OrderItemImplCopyWithImpl(
-      _$OrderItemImpl _value, $Res Function(_$OrderItemImpl) _then)
+class __$$BuyerProfileImplCopyWithImpl<$Res>
+    extends _$BuyerProfileCopyWithImpl<$Res, _$BuyerProfileImpl>
+    implements _$$BuyerProfileImplCopyWith<$Res> {
+  __$$BuyerProfileImplCopyWithImpl(
+      _$BuyerProfileImpl _value, $Res Function(_$BuyerProfileImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of OrderItem
+  /// Create a copy of BuyerProfile
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? ticketTypeId = null,
-    Object? ticketTypeName = null,
-    Object? quantity = null,
-    Object? unitPrice = null,
+    Object? fullName = freezed,
+    Object? email = freezed,
+    Object? phoneNumber = freezed,
+    Object? city = freezed,
+    Object? neighborhood = freezed,
   }) {
-    return _then(_$OrderItemImpl(
-      ticketTypeId: null == ticketTypeId
-          ? _value.ticketTypeId
-          : ticketTypeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      ticketTypeName: null == ticketTypeName
-          ? _value.ticketTypeName
-          : ticketTypeName // ignore: cast_nullable_to_non_nullable
-              as String,
-      quantity: null == quantity
-          ? _value.quantity
-          : quantity // ignore: cast_nullable_to_non_nullable
-              as int,
-      unitPrice: null == unitPrice
-          ? _value.unitPrice
-          : unitPrice // ignore: cast_nullable_to_non_nullable
-              as double,
+    return _then(_$BuyerProfileImpl(
+      fullName: freezed == fullName
+          ? _value.fullName
+          : fullName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      email: freezed == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String?,
+      phoneNumber: freezed == phoneNumber
+          ? _value.phoneNumber
+          : phoneNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      city: freezed == city
+          ? _value.city
+          : city // ignore: cast_nullable_to_non_nullable
+              as String?,
+      neighborhood: freezed == neighborhood
+          ? _value.neighborhood
+          : neighborhood // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$OrderItemImpl implements _OrderItem {
-  const _$OrderItemImpl(
-      {required this.ticketTypeId,
-      required this.ticketTypeName,
-      required this.quantity,
-      required this.unitPrice});
+class _$BuyerProfileImpl implements _BuyerProfile {
+  const _$BuyerProfileImpl(
+      {this.fullName,
+      this.email,
+      this.phoneNumber,
+      this.city,
+      this.neighborhood});
 
-  factory _$OrderItemImpl.fromJson(Map<String, dynamic> json) =>
-      _$$OrderItemImplFromJson(json);
+  factory _$BuyerProfileImpl.fromJson(Map<String, dynamic> json) =>
+      _$$BuyerProfileImplFromJson(json);
 
   @override
-  final String ticketTypeId;
+  final String? fullName;
   @override
-  final String ticketTypeName;
+  final String? email;
   @override
-  final int quantity;
+  final String? phoneNumber;
   @override
-  final double unitPrice;
+  final String? city;
+  @override
+  final String? neighborhood;
 
   @override
   String toString() {
-    return 'OrderItem(ticketTypeId: $ticketTypeId, ticketTypeName: $ticketTypeName, quantity: $quantity, unitPrice: $unitPrice)';
+    return 'BuyerProfile(fullName: $fullName, email: $email, phoneNumber: $phoneNumber, city: $city, neighborhood: $neighborhood)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$OrderItemImpl &&
-            (identical(other.ticketTypeId, ticketTypeId) ||
-                other.ticketTypeId == ticketTypeId) &&
-            (identical(other.ticketTypeName, ticketTypeName) ||
-                other.ticketTypeName == ticketTypeName) &&
-            (identical(other.quantity, quantity) ||
-                other.quantity == quantity) &&
-            (identical(other.unitPrice, unitPrice) ||
-                other.unitPrice == unitPrice));
+            other is _$BuyerProfileImpl &&
+            (identical(other.fullName, fullName) ||
+                other.fullName == fullName) &&
+            (identical(other.email, email) || other.email == email) &&
+            (identical(other.phoneNumber, phoneNumber) ||
+                other.phoneNumber == phoneNumber) &&
+            (identical(other.city, city) || other.city == city) &&
+            (identical(other.neighborhood, neighborhood) ||
+                other.neighborhood == neighborhood));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType, ticketTypeId, ticketTypeName, quantity, unitPrice);
+      runtimeType, fullName, email, phoneNumber, city, neighborhood);
 
-  /// Create a copy of OrderItem
+  /// Create a copy of BuyerProfile
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$OrderItemImplCopyWith<_$OrderItemImpl> get copyWith =>
-      __$$OrderItemImplCopyWithImpl<_$OrderItemImpl>(this, _$identity);
+  _$$BuyerProfileImplCopyWith<_$BuyerProfileImpl> get copyWith =>
+      __$$BuyerProfileImplCopyWithImpl<_$BuyerProfileImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$OrderItemImplToJson(
+    return _$$BuyerProfileImplToJson(
       this,
     );
   }
 }
 
-abstract class _OrderItem implements OrderItem {
-  const factory _OrderItem(
-      {required final String ticketTypeId,
-      required final String ticketTypeName,
-      required final int quantity,
-      required final double unitPrice}) = _$OrderItemImpl;
+abstract class _BuyerProfile implements BuyerProfile {
+  const factory _BuyerProfile(
+      {final String? fullName,
+      final String? email,
+      final String? phoneNumber,
+      final String? city,
+      final String? neighborhood}) = _$BuyerProfileImpl;
 
-  factory _OrderItem.fromJson(Map<String, dynamic> json) =
-      _$OrderItemImpl.fromJson;
+  factory _BuyerProfile.fromJson(Map<String, dynamic> json) =
+      _$BuyerProfileImpl.fromJson;
 
   @override
-  String get ticketTypeId;
+  String? get fullName;
   @override
-  String get ticketTypeName;
+  String? get email;
   @override
-  int get quantity;
+  String? get phoneNumber;
   @override
-  double get unitPrice;
+  String? get city;
+  @override
+  String? get neighborhood;
 
-  /// Create a copy of OrderItem
+  /// Create a copy of BuyerProfile
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$OrderItemImplCopyWith<_$OrderItemImpl> get copyWith =>
+  _$$BuyerProfileImplCopyWith<_$BuyerProfileImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+TicketTypeInfo _$TicketTypeInfoFromJson(Map<String, dynamic> json) {
+  return _TicketTypeInfo.fromJson(json);
+}
+
+/// @nodoc
+mixin _$TicketTypeInfo {
+  String? get id => throw _privateConstructorUsedError;
+  String? get name => throw _privateConstructorUsedError;
+  double? get price => throw _privateConstructorUsedError;
+  int? get availableQuantity => throw _privateConstructorUsedError;
+  int? get soldQuantity => throw _privateConstructorUsedError;
+  bool? get isVisible => throw _privateConstructorUsedError;
+  bool? get isFree => throw _privateConstructorUsedError;
+
+  /// Serializes this TicketTypeInfo to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of TicketTypeInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $TicketTypeInfoCopyWith<TicketTypeInfo> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $TicketTypeInfoCopyWith<$Res> {
+  factory $TicketTypeInfoCopyWith(
+          TicketTypeInfo value, $Res Function(TicketTypeInfo) then) =
+      _$TicketTypeInfoCopyWithImpl<$Res, TicketTypeInfo>;
+  @useResult
+  $Res call(
+      {String? id,
+      String? name,
+      double? price,
+      int? availableQuantity,
+      int? soldQuantity,
+      bool? isVisible,
+      bool? isFree});
+}
+
+/// @nodoc
+class _$TicketTypeInfoCopyWithImpl<$Res, $Val extends TicketTypeInfo>
+    implements $TicketTypeInfoCopyWith<$Res> {
+  _$TicketTypeInfoCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of TicketTypeInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? name = freezed,
+    Object? price = freezed,
+    Object? availableQuantity = freezed,
+    Object? soldQuantity = freezed,
+    Object? isVisible = freezed,
+    Object? isFree = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      price: freezed == price
+          ? _value.price
+          : price // ignore: cast_nullable_to_non_nullable
+              as double?,
+      availableQuantity: freezed == availableQuantity
+          ? _value.availableQuantity
+          : availableQuantity // ignore: cast_nullable_to_non_nullable
+              as int?,
+      soldQuantity: freezed == soldQuantity
+          ? _value.soldQuantity
+          : soldQuantity // ignore: cast_nullable_to_non_nullable
+              as int?,
+      isVisible: freezed == isVisible
+          ? _value.isVisible
+          : isVisible // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      isFree: freezed == isFree
+          ? _value.isFree
+          : isFree // ignore: cast_nullable_to_non_nullable
+              as bool?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$TicketTypeInfoImplCopyWith<$Res>
+    implements $TicketTypeInfoCopyWith<$Res> {
+  factory _$$TicketTypeInfoImplCopyWith(_$TicketTypeInfoImpl value,
+          $Res Function(_$TicketTypeInfoImpl) then) =
+      __$$TicketTypeInfoImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String? id,
+      String? name,
+      double? price,
+      int? availableQuantity,
+      int? soldQuantity,
+      bool? isVisible,
+      bool? isFree});
+}
+
+/// @nodoc
+class __$$TicketTypeInfoImplCopyWithImpl<$Res>
+    extends _$TicketTypeInfoCopyWithImpl<$Res, _$TicketTypeInfoImpl>
+    implements _$$TicketTypeInfoImplCopyWith<$Res> {
+  __$$TicketTypeInfoImplCopyWithImpl(
+      _$TicketTypeInfoImpl _value, $Res Function(_$TicketTypeInfoImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of TicketTypeInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? name = freezed,
+    Object? price = freezed,
+    Object? availableQuantity = freezed,
+    Object? soldQuantity = freezed,
+    Object? isVisible = freezed,
+    Object? isFree = freezed,
+  }) {
+    return _then(_$TicketTypeInfoImpl(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      price: freezed == price
+          ? _value.price
+          : price // ignore: cast_nullable_to_non_nullable
+              as double?,
+      availableQuantity: freezed == availableQuantity
+          ? _value.availableQuantity
+          : availableQuantity // ignore: cast_nullable_to_non_nullable
+              as int?,
+      soldQuantity: freezed == soldQuantity
+          ? _value.soldQuantity
+          : soldQuantity // ignore: cast_nullable_to_non_nullable
+              as int?,
+      isVisible: freezed == isVisible
+          ? _value.isVisible
+          : isVisible // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      isFree: freezed == isFree
+          ? _value.isFree
+          : isFree // ignore: cast_nullable_to_non_nullable
+              as bool?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$TicketTypeInfoImpl implements _TicketTypeInfo {
+  const _$TicketTypeInfoImpl(
+      {this.id,
+      this.name,
+      this.price,
+      this.availableQuantity,
+      this.soldQuantity,
+      this.isVisible,
+      this.isFree});
+
+  factory _$TicketTypeInfoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$TicketTypeInfoImplFromJson(json);
+
+  @override
+  final String? id;
+  @override
+  final String? name;
+  @override
+  final double? price;
+  @override
+  final int? availableQuantity;
+  @override
+  final int? soldQuantity;
+  @override
+  final bool? isVisible;
+  @override
+  final bool? isFree;
+
+  @override
+  String toString() {
+    return 'TicketTypeInfo(id: $id, name: $name, price: $price, availableQuantity: $availableQuantity, soldQuantity: $soldQuantity, isVisible: $isVisible, isFree: $isFree)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$TicketTypeInfoImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.price, price) || other.price == price) &&
+            (identical(other.availableQuantity, availableQuantity) ||
+                other.availableQuantity == availableQuantity) &&
+            (identical(other.soldQuantity, soldQuantity) ||
+                other.soldQuantity == soldQuantity) &&
+            (identical(other.isVisible, isVisible) ||
+                other.isVisible == isVisible) &&
+            (identical(other.isFree, isFree) || other.isFree == isFree));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, name, price,
+      availableQuantity, soldQuantity, isVisible, isFree);
+
+  /// Create a copy of TicketTypeInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$TicketTypeInfoImplCopyWith<_$TicketTypeInfoImpl> get copyWith =>
+      __$$TicketTypeInfoImplCopyWithImpl<_$TicketTypeInfoImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$TicketTypeInfoImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _TicketTypeInfo implements TicketTypeInfo {
+  const factory _TicketTypeInfo(
+      {final String? id,
+      final String? name,
+      final double? price,
+      final int? availableQuantity,
+      final int? soldQuantity,
+      final bool? isVisible,
+      final bool? isFree}) = _$TicketTypeInfoImpl;
+
+  factory _TicketTypeInfo.fromJson(Map<String, dynamic> json) =
+      _$TicketTypeInfoImpl.fromJson;
+
+  @override
+  String? get id;
+  @override
+  String? get name;
+  @override
+  double? get price;
+  @override
+  int? get availableQuantity;
+  @override
+  int? get soldQuantity;
+  @override
+  bool? get isVisible;
+  @override
+  bool? get isFree;
+
+  /// Create a copy of TicketTypeInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$TicketTypeInfoImplCopyWith<_$TicketTypeInfoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -634,16 +888,14 @@ Ticket _$TicketFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Ticket {
   String get id => throw _privateConstructorUsedError;
-  String get orderId => throw _privateConstructorUsedError;
-  String get eventId => throw _privateConstructorUsedError;
-  String get ticketTypeId => throw _privateConstructorUsedError;
-  String get buyerId => throw _privateConstructorUsedError;
-  String get ticketNumber => throw _privateConstructorUsedError;
   String? get qrCode => throw _privateConstructorUsedError;
-  String get status => throw _privateConstructorUsedError;
-  DateTime? get usedAt => throw _privateConstructorUsedError;
-  String? get transferredTo => throw _privateConstructorUsedError;
+  String? get status => throw _privateConstructorUsedError;
+  DateTime? get purchaseDate => throw _privateConstructorUsedError;
+  String? get participantName => throw _privateConstructorUsedError;
   DateTime? get createdAt => throw _privateConstructorUsedError;
+  bool? get nominal => throw _privateConstructorUsedError;
+  @JsonKey(name: 'ticketType')
+  TicketTypeInfo? get ticketType => throw _privateConstructorUsedError;
 
   /// Serializes this Ticket to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -661,16 +913,15 @@ abstract class $TicketCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
-      String orderId,
-      String eventId,
-      String ticketTypeId,
-      String buyerId,
-      String ticketNumber,
       String? qrCode,
-      String status,
-      DateTime? usedAt,
-      String? transferredTo,
-      DateTime? createdAt});
+      String? status,
+      DateTime? purchaseDate,
+      String? participantName,
+      DateTime? createdAt,
+      bool? nominal,
+      @JsonKey(name: 'ticketType') TicketTypeInfo? ticketType});
+
+  $TicketTypeInfoCopyWith<$Res>? get ticketType;
 }
 
 /// @nodoc
@@ -689,63 +940,62 @@ class _$TicketCopyWithImpl<$Res, $Val extends Ticket>
   @override
   $Res call({
     Object? id = null,
-    Object? orderId = null,
-    Object? eventId = null,
-    Object? ticketTypeId = null,
-    Object? buyerId = null,
-    Object? ticketNumber = null,
     Object? qrCode = freezed,
-    Object? status = null,
-    Object? usedAt = freezed,
-    Object? transferredTo = freezed,
+    Object? status = freezed,
+    Object? purchaseDate = freezed,
+    Object? participantName = freezed,
     Object? createdAt = freezed,
+    Object? nominal = freezed,
+    Object? ticketType = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      orderId: null == orderId
-          ? _value.orderId
-          : orderId // ignore: cast_nullable_to_non_nullable
-              as String,
-      eventId: null == eventId
-          ? _value.eventId
-          : eventId // ignore: cast_nullable_to_non_nullable
-              as String,
-      ticketTypeId: null == ticketTypeId
-          ? _value.ticketTypeId
-          : ticketTypeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      buyerId: null == buyerId
-          ? _value.buyerId
-          : buyerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      ticketNumber: null == ticketNumber
-          ? _value.ticketNumber
-          : ticketNumber // ignore: cast_nullable_to_non_nullable
-              as String,
       qrCode: freezed == qrCode
           ? _value.qrCode
           : qrCode // ignore: cast_nullable_to_non_nullable
               as String?,
-      status: null == status
+      status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      usedAt: freezed == usedAt
-          ? _value.usedAt
-          : usedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      purchaseDate: freezed == purchaseDate
+          ? _value.purchaseDate
+          : purchaseDate // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      transferredTo: freezed == transferredTo
-          ? _value.transferredTo
-          : transferredTo // ignore: cast_nullable_to_non_nullable
+      participantName: freezed == participantName
+          ? _value.participantName
+          : participantName // ignore: cast_nullable_to_non_nullable
               as String?,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      nominal: freezed == nominal
+          ? _value.nominal
+          : nominal // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      ticketType: freezed == ticketType
+          ? _value.ticketType
+          : ticketType // ignore: cast_nullable_to_non_nullable
+              as TicketTypeInfo?,
     ) as $Val);
+  }
+
+  /// Create a copy of Ticket
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $TicketTypeInfoCopyWith<$Res>? get ticketType {
+    if (_value.ticketType == null) {
+      return null;
+    }
+
+    return $TicketTypeInfoCopyWith<$Res>(_value.ticketType!, (value) {
+      return _then(_value.copyWith(ticketType: value) as $Val);
+    });
   }
 }
 
@@ -758,16 +1008,16 @@ abstract class _$$TicketImplCopyWith<$Res> implements $TicketCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
-      String orderId,
-      String eventId,
-      String ticketTypeId,
-      String buyerId,
-      String ticketNumber,
       String? qrCode,
-      String status,
-      DateTime? usedAt,
-      String? transferredTo,
-      DateTime? createdAt});
+      String? status,
+      DateTime? purchaseDate,
+      String? participantName,
+      DateTime? createdAt,
+      bool? nominal,
+      @JsonKey(name: 'ticketType') TicketTypeInfo? ticketType});
+
+  @override
+  $TicketTypeInfoCopyWith<$Res>? get ticketType;
 }
 
 /// @nodoc
@@ -784,62 +1034,47 @@ class __$$TicketImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? orderId = null,
-    Object? eventId = null,
-    Object? ticketTypeId = null,
-    Object? buyerId = null,
-    Object? ticketNumber = null,
     Object? qrCode = freezed,
-    Object? status = null,
-    Object? usedAt = freezed,
-    Object? transferredTo = freezed,
+    Object? status = freezed,
+    Object? purchaseDate = freezed,
+    Object? participantName = freezed,
     Object? createdAt = freezed,
+    Object? nominal = freezed,
+    Object? ticketType = freezed,
   }) {
     return _then(_$TicketImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      orderId: null == orderId
-          ? _value.orderId
-          : orderId // ignore: cast_nullable_to_non_nullable
-              as String,
-      eventId: null == eventId
-          ? _value.eventId
-          : eventId // ignore: cast_nullable_to_non_nullable
-              as String,
-      ticketTypeId: null == ticketTypeId
-          ? _value.ticketTypeId
-          : ticketTypeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      buyerId: null == buyerId
-          ? _value.buyerId
-          : buyerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      ticketNumber: null == ticketNumber
-          ? _value.ticketNumber
-          : ticketNumber // ignore: cast_nullable_to_non_nullable
-              as String,
       qrCode: freezed == qrCode
           ? _value.qrCode
           : qrCode // ignore: cast_nullable_to_non_nullable
               as String?,
-      status: null == status
+      status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      usedAt: freezed == usedAt
-          ? _value.usedAt
-          : usedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      purchaseDate: freezed == purchaseDate
+          ? _value.purchaseDate
+          : purchaseDate // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      transferredTo: freezed == transferredTo
-          ? _value.transferredTo
-          : transferredTo // ignore: cast_nullable_to_non_nullable
+      participantName: freezed == participantName
+          ? _value.participantName
+          : participantName // ignore: cast_nullable_to_non_nullable
               as String?,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      nominal: freezed == nominal
+          ? _value.nominal
+          : nominal // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      ticketType: freezed == ticketType
+          ? _value.ticketType
+          : ticketType // ignore: cast_nullable_to_non_nullable
+              as TicketTypeInfo?,
     ));
   }
 }
@@ -849,16 +1084,13 @@ class __$$TicketImplCopyWithImpl<$Res>
 class _$TicketImpl implements _Ticket {
   const _$TicketImpl(
       {required this.id,
-      required this.orderId,
-      required this.eventId,
-      required this.ticketTypeId,
-      required this.buyerId,
-      required this.ticketNumber,
       this.qrCode,
-      required this.status,
-      this.usedAt,
-      this.transferredTo,
-      this.createdAt});
+      this.status,
+      this.purchaseDate,
+      this.participantName,
+      this.createdAt,
+      this.nominal,
+      @JsonKey(name: 'ticketType') this.ticketType});
 
   factory _$TicketImpl.fromJson(Map<String, dynamic> json) =>
       _$$TicketImplFromJson(json);
@@ -866,29 +1098,24 @@ class _$TicketImpl implements _Ticket {
   @override
   final String id;
   @override
-  final String orderId;
-  @override
-  final String eventId;
-  @override
-  final String ticketTypeId;
-  @override
-  final String buyerId;
-  @override
-  final String ticketNumber;
-  @override
   final String? qrCode;
   @override
-  final String status;
+  final String? status;
   @override
-  final DateTime? usedAt;
+  final DateTime? purchaseDate;
   @override
-  final String? transferredTo;
+  final String? participantName;
   @override
   final DateTime? createdAt;
+  @override
+  final bool? nominal;
+  @override
+  @JsonKey(name: 'ticketType')
+  final TicketTypeInfo? ticketType;
 
   @override
   String toString() {
-    return 'Ticket(id: $id, orderId: $orderId, eventId: $eventId, ticketTypeId: $ticketTypeId, buyerId: $buyerId, ticketNumber: $ticketNumber, qrCode: $qrCode, status: $status, usedAt: $usedAt, transferredTo: $transferredTo, createdAt: $createdAt)';
+    return 'Ticket(id: $id, qrCode: $qrCode, status: $status, purchaseDate: $purchaseDate, participantName: $participantName, createdAt: $createdAt, nominal: $nominal, ticketType: $ticketType)';
   }
 
   @override
@@ -897,37 +1124,23 @@ class _$TicketImpl implements _Ticket {
         (other.runtimeType == runtimeType &&
             other is _$TicketImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.orderId, orderId) || other.orderId == orderId) &&
-            (identical(other.eventId, eventId) || other.eventId == eventId) &&
-            (identical(other.ticketTypeId, ticketTypeId) ||
-                other.ticketTypeId == ticketTypeId) &&
-            (identical(other.buyerId, buyerId) || other.buyerId == buyerId) &&
-            (identical(other.ticketNumber, ticketNumber) ||
-                other.ticketNumber == ticketNumber) &&
             (identical(other.qrCode, qrCode) || other.qrCode == qrCode) &&
             (identical(other.status, status) || other.status == status) &&
-            (identical(other.usedAt, usedAt) || other.usedAt == usedAt) &&
-            (identical(other.transferredTo, transferredTo) ||
-                other.transferredTo == transferredTo) &&
+            (identical(other.purchaseDate, purchaseDate) ||
+                other.purchaseDate == purchaseDate) &&
+            (identical(other.participantName, participantName) ||
+                other.participantName == participantName) &&
             (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt));
+                other.createdAt == createdAt) &&
+            (identical(other.nominal, nominal) || other.nominal == nominal) &&
+            (identical(other.ticketType, ticketType) ||
+                other.ticketType == ticketType));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      orderId,
-      eventId,
-      ticketTypeId,
-      buyerId,
-      ticketNumber,
-      qrCode,
-      status,
-      usedAt,
-      transferredTo,
-      createdAt);
+  int get hashCode => Object.hash(runtimeType, id, qrCode, status, purchaseDate,
+      participantName, createdAt, nominal, ticketType);
 
   /// Create a copy of Ticket
   /// with the given fields replaced by the non-null parameter values.
@@ -947,42 +1160,35 @@ class _$TicketImpl implements _Ticket {
 
 abstract class _Ticket implements Ticket {
   const factory _Ticket(
-      {required final String id,
-      required final String orderId,
-      required final String eventId,
-      required final String ticketTypeId,
-      required final String buyerId,
-      required final String ticketNumber,
-      final String? qrCode,
-      required final String status,
-      final DateTime? usedAt,
-      final String? transferredTo,
-      final DateTime? createdAt}) = _$TicketImpl;
+          {required final String id,
+          final String? qrCode,
+          final String? status,
+          final DateTime? purchaseDate,
+          final String? participantName,
+          final DateTime? createdAt,
+          final bool? nominal,
+          @JsonKey(name: 'ticketType') final TicketTypeInfo? ticketType}) =
+      _$TicketImpl;
 
   factory _Ticket.fromJson(Map<String, dynamic> json) = _$TicketImpl.fromJson;
 
   @override
   String get id;
   @override
-  String get orderId;
-  @override
-  String get eventId;
-  @override
-  String get ticketTypeId;
-  @override
-  String get buyerId;
-  @override
-  String get ticketNumber;
-  @override
   String? get qrCode;
   @override
-  String get status;
+  String? get status;
   @override
-  DateTime? get usedAt;
+  DateTime? get purchaseDate;
   @override
-  String? get transferredTo;
+  String? get participantName;
   @override
   DateTime? get createdAt;
+  @override
+  bool? get nominal;
+  @override
+  @JsonKey(name: 'ticketType')
+  TicketTypeInfo? get ticketType;
 
   /// Create a copy of Ticket
   /// with the given fields replaced by the non-null parameter values.
@@ -992,130 +1198,169 @@ abstract class _Ticket implements Ticket {
       throw _privateConstructorUsedError;
 }
 
-CreateOrderRequest _$CreateOrderRequestFromJson(Map<String, dynamic> json) {
-  return _CreateOrderRequest.fromJson(json);
+PaymentInfo _$PaymentInfoFromJson(Map<String, dynamic> json) {
+  return _PaymentInfo.fromJson(json);
 }
 
 /// @nodoc
-mixin _$CreateOrderRequest {
-  String get eventId => throw _privateConstructorUsedError;
-  List<OrderItemRequest> get items => throw _privateConstructorUsedError;
-  String? get promoCode => throw _privateConstructorUsedError;
-  String? get paymentMethodId => throw _privateConstructorUsedError;
+mixin _$PaymentInfo {
+  String? get id => throw _privateConstructorUsedError;
+  double? get amount => throw _privateConstructorUsedError;
+  String? get currency => throw _privateConstructorUsedError;
+  DateTime? get paymentDate => throw _privateConstructorUsedError;
+  String? get status => throw _privateConstructorUsedError;
+  String? get paymentMethod => throw _privateConstructorUsedError;
+  String? get transactionReference => throw _privateConstructorUsedError;
 
-  /// Serializes this CreateOrderRequest to a JSON map.
+  /// Serializes this PaymentInfo to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
-  /// Create a copy of CreateOrderRequest
+  /// Create a copy of PaymentInfo
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $CreateOrderRequestCopyWith<CreateOrderRequest> get copyWith =>
+  $PaymentInfoCopyWith<PaymentInfo> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $CreateOrderRequestCopyWith<$Res> {
-  factory $CreateOrderRequestCopyWith(
-          CreateOrderRequest value, $Res Function(CreateOrderRequest) then) =
-      _$CreateOrderRequestCopyWithImpl<$Res, CreateOrderRequest>;
+abstract class $PaymentInfoCopyWith<$Res> {
+  factory $PaymentInfoCopyWith(
+          PaymentInfo value, $Res Function(PaymentInfo) then) =
+      _$PaymentInfoCopyWithImpl<$Res, PaymentInfo>;
   @useResult
   $Res call(
-      {String eventId,
-      List<OrderItemRequest> items,
-      String? promoCode,
-      String? paymentMethodId});
+      {String? id,
+      double? amount,
+      String? currency,
+      DateTime? paymentDate,
+      String? status,
+      String? paymentMethod,
+      String? transactionReference});
 }
 
 /// @nodoc
-class _$CreateOrderRequestCopyWithImpl<$Res, $Val extends CreateOrderRequest>
-    implements $CreateOrderRequestCopyWith<$Res> {
-  _$CreateOrderRequestCopyWithImpl(this._value, this._then);
+class _$PaymentInfoCopyWithImpl<$Res, $Val extends PaymentInfo>
+    implements $PaymentInfoCopyWith<$Res> {
+  _$PaymentInfoCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of CreateOrderRequest
+  /// Create a copy of PaymentInfo
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? eventId = null,
-    Object? items = null,
-    Object? promoCode = freezed,
-    Object? paymentMethodId = freezed,
+    Object? id = freezed,
+    Object? amount = freezed,
+    Object? currency = freezed,
+    Object? paymentDate = freezed,
+    Object? status = freezed,
+    Object? paymentMethod = freezed,
+    Object? transactionReference = freezed,
   }) {
     return _then(_value.copyWith(
-      eventId: null == eventId
-          ? _value.eventId
-          : eventId // ignore: cast_nullable_to_non_nullable
-              as String,
-      items: null == items
-          ? _value.items
-          : items // ignore: cast_nullable_to_non_nullable
-              as List<OrderItemRequest>,
-      promoCode: freezed == promoCode
-          ? _value.promoCode
-          : promoCode // ignore: cast_nullable_to_non_nullable
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
               as String?,
-      paymentMethodId: freezed == paymentMethodId
-          ? _value.paymentMethodId
-          : paymentMethodId // ignore: cast_nullable_to_non_nullable
+      amount: freezed == amount
+          ? _value.amount
+          : amount // ignore: cast_nullable_to_non_nullable
+              as double?,
+      currency: freezed == currency
+          ? _value.currency
+          : currency // ignore: cast_nullable_to_non_nullable
+              as String?,
+      paymentDate: freezed == paymentDate
+          ? _value.paymentDate
+          : paymentDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      status: freezed == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String?,
+      paymentMethod: freezed == paymentMethod
+          ? _value.paymentMethod
+          : paymentMethod // ignore: cast_nullable_to_non_nullable
+              as String?,
+      transactionReference: freezed == transactionReference
+          ? _value.transactionReference
+          : transactionReference // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$CreateOrderRequestImplCopyWith<$Res>
-    implements $CreateOrderRequestCopyWith<$Res> {
-  factory _$$CreateOrderRequestImplCopyWith(_$CreateOrderRequestImpl value,
-          $Res Function(_$CreateOrderRequestImpl) then) =
-      __$$CreateOrderRequestImplCopyWithImpl<$Res>;
+abstract class _$$PaymentInfoImplCopyWith<$Res>
+    implements $PaymentInfoCopyWith<$Res> {
+  factory _$$PaymentInfoImplCopyWith(
+          _$PaymentInfoImpl value, $Res Function(_$PaymentInfoImpl) then) =
+      __$$PaymentInfoImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
-      {String eventId,
-      List<OrderItemRequest> items,
-      String? promoCode,
-      String? paymentMethodId});
+      {String? id,
+      double? amount,
+      String? currency,
+      DateTime? paymentDate,
+      String? status,
+      String? paymentMethod,
+      String? transactionReference});
 }
 
 /// @nodoc
-class __$$CreateOrderRequestImplCopyWithImpl<$Res>
-    extends _$CreateOrderRequestCopyWithImpl<$Res, _$CreateOrderRequestImpl>
-    implements _$$CreateOrderRequestImplCopyWith<$Res> {
-  __$$CreateOrderRequestImplCopyWithImpl(_$CreateOrderRequestImpl _value,
-      $Res Function(_$CreateOrderRequestImpl) _then)
+class __$$PaymentInfoImplCopyWithImpl<$Res>
+    extends _$PaymentInfoCopyWithImpl<$Res, _$PaymentInfoImpl>
+    implements _$$PaymentInfoImplCopyWith<$Res> {
+  __$$PaymentInfoImplCopyWithImpl(
+      _$PaymentInfoImpl _value, $Res Function(_$PaymentInfoImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of CreateOrderRequest
+  /// Create a copy of PaymentInfo
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? eventId = null,
-    Object? items = null,
-    Object? promoCode = freezed,
-    Object? paymentMethodId = freezed,
+    Object? id = freezed,
+    Object? amount = freezed,
+    Object? currency = freezed,
+    Object? paymentDate = freezed,
+    Object? status = freezed,
+    Object? paymentMethod = freezed,
+    Object? transactionReference = freezed,
   }) {
-    return _then(_$CreateOrderRequestImpl(
-      eventId: null == eventId
-          ? _value.eventId
-          : eventId // ignore: cast_nullable_to_non_nullable
-              as String,
-      items: null == items
-          ? _value._items
-          : items // ignore: cast_nullable_to_non_nullable
-              as List<OrderItemRequest>,
-      promoCode: freezed == promoCode
-          ? _value.promoCode
-          : promoCode // ignore: cast_nullable_to_non_nullable
+    return _then(_$PaymentInfoImpl(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
               as String?,
-      paymentMethodId: freezed == paymentMethodId
-          ? _value.paymentMethodId
-          : paymentMethodId // ignore: cast_nullable_to_non_nullable
+      amount: freezed == amount
+          ? _value.amount
+          : amount // ignore: cast_nullable_to_non_nullable
+              as double?,
+      currency: freezed == currency
+          ? _value.currency
+          : currency // ignore: cast_nullable_to_non_nullable
+              as String?,
+      paymentDate: freezed == paymentDate
+          ? _value.paymentDate
+          : paymentDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      status: freezed == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String?,
+      paymentMethod: freezed == paymentMethod
+          ? _value.paymentMethod
+          : paymentMethod // ignore: cast_nullable_to_non_nullable
+              as String?,
+      transactionReference: freezed == transactionReference
+          ? _value.transactionReference
+          : transactionReference // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
@@ -1123,96 +1368,111 @@ class __$$CreateOrderRequestImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$CreateOrderRequestImpl implements _CreateOrderRequest {
-  const _$CreateOrderRequestImpl(
-      {required this.eventId,
-      required final List<OrderItemRequest> items,
-      this.promoCode,
-      this.paymentMethodId})
-      : _items = items;
+class _$PaymentInfoImpl implements _PaymentInfo {
+  const _$PaymentInfoImpl(
+      {this.id,
+      this.amount,
+      this.currency,
+      this.paymentDate,
+      this.status,
+      this.paymentMethod,
+      this.transactionReference});
 
-  factory _$CreateOrderRequestImpl.fromJson(Map<String, dynamic> json) =>
-      _$$CreateOrderRequestImplFromJson(json);
-
-  @override
-  final String eventId;
-  final List<OrderItemRequest> _items;
-  @override
-  List<OrderItemRequest> get items {
-    if (_items is EqualUnmodifiableListView) return _items;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_items);
-  }
+  factory _$PaymentInfoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$PaymentInfoImplFromJson(json);
 
   @override
-  final String? promoCode;
+  final String? id;
   @override
-  final String? paymentMethodId;
+  final double? amount;
+  @override
+  final String? currency;
+  @override
+  final DateTime? paymentDate;
+  @override
+  final String? status;
+  @override
+  final String? paymentMethod;
+  @override
+  final String? transactionReference;
 
   @override
   String toString() {
-    return 'CreateOrderRequest(eventId: $eventId, items: $items, promoCode: $promoCode, paymentMethodId: $paymentMethodId)';
+    return 'PaymentInfo(id: $id, amount: $amount, currency: $currency, paymentDate: $paymentDate, status: $status, paymentMethod: $paymentMethod, transactionReference: $transactionReference)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$CreateOrderRequestImpl &&
-            (identical(other.eventId, eventId) || other.eventId == eventId) &&
-            const DeepCollectionEquality().equals(other._items, _items) &&
-            (identical(other.promoCode, promoCode) ||
-                other.promoCode == promoCode) &&
-            (identical(other.paymentMethodId, paymentMethodId) ||
-                other.paymentMethodId == paymentMethodId));
+            other is _$PaymentInfoImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.amount, amount) || other.amount == amount) &&
+            (identical(other.currency, currency) ||
+                other.currency == currency) &&
+            (identical(other.paymentDate, paymentDate) ||
+                other.paymentDate == paymentDate) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.paymentMethod, paymentMethod) ||
+                other.paymentMethod == paymentMethod) &&
+            (identical(other.transactionReference, transactionReference) ||
+                other.transactionReference == transactionReference));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, eventId,
-      const DeepCollectionEquality().hash(_items), promoCode, paymentMethodId);
+  int get hashCode => Object.hash(runtimeType, id, amount, currency,
+      paymentDate, status, paymentMethod, transactionReference);
 
-  /// Create a copy of CreateOrderRequest
+  /// Create a copy of PaymentInfo
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$CreateOrderRequestImplCopyWith<_$CreateOrderRequestImpl> get copyWith =>
-      __$$CreateOrderRequestImplCopyWithImpl<_$CreateOrderRequestImpl>(
-          this, _$identity);
+  _$$PaymentInfoImplCopyWith<_$PaymentInfoImpl> get copyWith =>
+      __$$PaymentInfoImplCopyWithImpl<_$PaymentInfoImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$CreateOrderRequestImplToJson(
+    return _$$PaymentInfoImplToJson(
       this,
     );
   }
 }
 
-abstract class _CreateOrderRequest implements CreateOrderRequest {
-  const factory _CreateOrderRequest(
-      {required final String eventId,
-      required final List<OrderItemRequest> items,
-      final String? promoCode,
-      final String? paymentMethodId}) = _$CreateOrderRequestImpl;
+abstract class _PaymentInfo implements PaymentInfo {
+  const factory _PaymentInfo(
+      {final String? id,
+      final double? amount,
+      final String? currency,
+      final DateTime? paymentDate,
+      final String? status,
+      final String? paymentMethod,
+      final String? transactionReference}) = _$PaymentInfoImpl;
 
-  factory _CreateOrderRequest.fromJson(Map<String, dynamic> json) =
-      _$CreateOrderRequestImpl.fromJson;
+  factory _PaymentInfo.fromJson(Map<String, dynamic> json) =
+      _$PaymentInfoImpl.fromJson;
 
   @override
-  String get eventId;
+  String? get id;
   @override
-  List<OrderItemRequest> get items;
+  double? get amount;
   @override
-  String? get promoCode;
+  String? get currency;
   @override
-  String? get paymentMethodId;
+  DateTime? get paymentDate;
+  @override
+  String? get status;
+  @override
+  String? get paymentMethod;
+  @override
+  String? get transactionReference;
 
-  /// Create a copy of CreateOrderRequest
+  /// Create a copy of PaymentInfo
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$CreateOrderRequestImplCopyWith<_$CreateOrderRequestImpl> get copyWith =>
+  _$$PaymentInfoImplCopyWith<_$PaymentInfoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -1394,7 +1654,7 @@ TransferTicketRequest _$TransferTicketRequestFromJson(
 
 /// @nodoc
 mixin _$TransferTicketRequest {
-  String get recipientEmail => throw _privateConstructorUsedError;
+  String get newParticipantName => throw _privateConstructorUsedError;
 
   /// Serializes this TransferTicketRequest to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -1412,7 +1672,7 @@ abstract class $TransferTicketRequestCopyWith<$Res> {
           $Res Function(TransferTicketRequest) then) =
       _$TransferTicketRequestCopyWithImpl<$Res, TransferTicketRequest>;
   @useResult
-  $Res call({String recipientEmail});
+  $Res call({String newParticipantName});
 }
 
 /// @nodoc
@@ -1431,12 +1691,12 @@ class _$TransferTicketRequestCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? recipientEmail = null,
+    Object? newParticipantName = null,
   }) {
     return _then(_value.copyWith(
-      recipientEmail: null == recipientEmail
-          ? _value.recipientEmail
-          : recipientEmail // ignore: cast_nullable_to_non_nullable
+      newParticipantName: null == newParticipantName
+          ? _value.newParticipantName
+          : newParticipantName // ignore: cast_nullable_to_non_nullable
               as String,
     ) as $Val);
   }
@@ -1451,7 +1711,7 @@ abstract class _$$TransferTicketRequestImplCopyWith<$Res>
       __$$TransferTicketRequestImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String recipientEmail});
+  $Res call({String newParticipantName});
 }
 
 /// @nodoc
@@ -1468,12 +1728,12 @@ class __$$TransferTicketRequestImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? recipientEmail = null,
+    Object? newParticipantName = null,
   }) {
     return _then(_$TransferTicketRequestImpl(
-      recipientEmail: null == recipientEmail
-          ? _value.recipientEmail
-          : recipientEmail // ignore: cast_nullable_to_non_nullable
+      newParticipantName: null == newParticipantName
+          ? _value.newParticipantName
+          : newParticipantName // ignore: cast_nullable_to_non_nullable
               as String,
     ));
   }
@@ -1482,17 +1742,17 @@ class __$$TransferTicketRequestImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$TransferTicketRequestImpl implements _TransferTicketRequest {
-  const _$TransferTicketRequestImpl({required this.recipientEmail});
+  const _$TransferTicketRequestImpl({required this.newParticipantName});
 
   factory _$TransferTicketRequestImpl.fromJson(Map<String, dynamic> json) =>
       _$$TransferTicketRequestImplFromJson(json);
 
   @override
-  final String recipientEmail;
+  final String newParticipantName;
 
   @override
   String toString() {
-    return 'TransferTicketRequest(recipientEmail: $recipientEmail)';
+    return 'TransferTicketRequest(newParticipantName: $newParticipantName)';
   }
 
   @override
@@ -1500,13 +1760,13 @@ class _$TransferTicketRequestImpl implements _TransferTicketRequest {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$TransferTicketRequestImpl &&
-            (identical(other.recipientEmail, recipientEmail) ||
-                other.recipientEmail == recipientEmail));
+            (identical(other.newParticipantName, newParticipantName) ||
+                other.newParticipantName == newParticipantName));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, recipientEmail);
+  int get hashCode => Object.hash(runtimeType, newParticipantName);
 
   /// Create a copy of TransferTicketRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -1526,14 +1786,14 @@ class _$TransferTicketRequestImpl implements _TransferTicketRequest {
 }
 
 abstract class _TransferTicketRequest implements TransferTicketRequest {
-  const factory _TransferTicketRequest({required final String recipientEmail}) =
-      _$TransferTicketRequestImpl;
+  const factory _TransferTicketRequest(
+      {required final String newParticipantName}) = _$TransferTicketRequestImpl;
 
   factory _TransferTicketRequest.fromJson(Map<String, dynamic> json) =
       _$TransferTicketRequestImpl.fromJson;
 
   @override
-  String get recipientEmail;
+  String get newParticipantName;
 
   /// Create a copy of TransferTicketRequest
   /// with the given fields replaced by the non-null parameter values.

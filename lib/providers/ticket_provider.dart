@@ -21,7 +21,10 @@ class TicketProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _tickets = await _ticketService.getTickets(page: page, pageSize: pageSize);
+      _tickets = await _ticketService.getTickets(
+        page: page,
+        pageSize: pageSize,
+      );
       return true;
     } catch (e) {
       _error = e.toString();
@@ -32,15 +35,15 @@ class TicketProvider extends ChangeNotifier {
     }
   }
 
-  Future<String?> getTicketQRCode(String ticketId) async {
-    try {
-      return await _ticketService.getTicketQRCode(ticketId);
-    } catch (e) {
-      return null;
-    }
+  /// Le QR code est directement dans l'objet Ticket
+  String getQrCode(Ticket ticket) {
+    return _ticketService.getQrCodeFromTicket(ticket);
   }
 
-  Future<bool> transferTicket(String ticketId, String recipientEmail) async {
+  Future<bool> transferTicket(
+    String ticketId,
+    String newParticipantName,
+  ) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
@@ -48,14 +51,14 @@ class TicketProvider extends ChangeNotifier {
     try {
       final updatedTicket = await _ticketService.transferTicket(
         ticketId,
-        recipientEmail: recipientEmail,
+        newParticipantName: newParticipantName,
       );
-      
+
       final index = _tickets.indexWhere((t) => t.id == ticketId);
       if (index != -1) {
         _tickets[index] = updatedTicket;
       }
-      
+
       return true;
     } catch (e) {
       _error = e.toString();

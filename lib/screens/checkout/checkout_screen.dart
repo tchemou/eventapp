@@ -103,6 +103,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               itemBuilder: (context, index) {
                 final ticket = ticketTypes[index];
                 final qty = _selectedQuantities[ticket.id] ?? 0;
+                final available = ticket.availableQuantity ?? 0;
                 
                 return Card(
                   margin: const EdgeInsets.only(bottom: 16),
@@ -126,8 +127,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                ticket.description,
-                                style: Theme.of(context).textTheme.bodySmall,
+                                available > 0
+                                    ? '$available places disponibles'
+                                    : 'Épuisé',
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: available > 0
+                                          ? context.gold
+                                          : Colors.grey,
+                                    ),
                               ),
                               const SizedBox(height: 8),
                               Text(
@@ -144,7 +151,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         Row(
                           children: [
                             IconButton(
-                              onPressed: () => _updateQuantity(ticket.id, -1, ticket.availableQuantity),
+                              onPressed: () => _updateQuantity(ticket.id, -1, available),
                               icon: const Icon(Icons.remove_circle_outline),
                               color: qty > 0 ? context.gold : Colors.grey,
                             ),
@@ -153,9 +160,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                             ),
                             IconButton(
-                              onPressed: () => _updateQuantity(ticket.id, 1, ticket.availableQuantity),
+                              onPressed: () => _updateQuantity(ticket.id, 1, available),
                               icon: const Icon(Icons.add_circle_outline),
-                              color: qty < ticket.availableQuantity ? context.gold : Colors.grey,
+                              color: qty < available ? context.gold : Colors.grey,
                             ),
                           ],
                         )

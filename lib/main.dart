@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'config/app_constants.dart';
 import 'config/app_theme.dart';
@@ -6,8 +8,9 @@ import 'providers/auth_provider.dart';
 import 'providers/event_provider.dart';
 import 'providers/order_provider.dart';
 import 'providers/ticket_provider.dart';
+import 'providers/payment_provider.dart';
 import 'screens/auth/login_screen.dart';
-import 'screens/auth/welcome_screen.dart';   // ✅ ajouté
+import 'screens/auth/welcome_screen.dart';
 import 'screens/main_shell.dart';
 import 'screens/splash_screen.dart';
 import 'services/auth_service.dart';
@@ -22,8 +25,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('fr_FR', null);
 
-  final httpService = HttpService();
-  final authService = AuthService(httpService);
+  // ✅ FIX : initialiser les données de locale pour DateFormat('...', 'fr_FR')
+  await initializeDateFormatting('fr_FR', null);
+
+  final httpService   = HttpService();
+  final authService   = AuthService(httpService);
 
   try {
     await authService.init();
@@ -49,6 +55,9 @@ void main() async {
         ChangeNotifierProvider(create: (_) => EventProvider(eventService)),
         ChangeNotifierProvider(create: (_) => OrderProvider(orderService)),
         ChangeNotifierProvider(create: (_) => TicketProvider(ticketService)),
+        ChangeNotifierProvider(
+          create: (ctx) => PaymentProvider(ctx.read<OrderService>()),
+        ),
       ],
       child: const NexGenEventsApp(),
     ),
@@ -105,10 +114,29 @@ class _NexGenEventsAppState extends State<NexGenEventsApp> {
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.light,
 
+      // ✅ FIX : déclarer les locales pour que Flutter utilise fr_FR partout
+      locale: const Locale('fr', 'FR'),
+      supportedLocales: const [
+        Locale('fr', 'FR'),
+        Locale('en', 'US'),
+      ],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+
       home: !_isInitialized
           ? const _LoadingScreen()
           : Consumer<AuthProvider>(
               builder: (context, authProvider, _) {
+<<<<<<< HEAD
+=======
+                if (authProvider.isLoggedIn) {
+                  if (authProvider.isNewUser) return const WelcomeScreen();
+                  return const MainShell();
+                }
+>>>>>>> 63b260328175168e24cc81cd18cb25230d1fdcf2
                 if (_showSplash) {
                   return SplashScreen(
                     onDone: () => setState(() => _showSplash = false),
