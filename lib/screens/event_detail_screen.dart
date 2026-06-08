@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:dio/dio.dart';
 import '../config/app_theme.dart';
 import '../models/event.dart';
 import '../providers/event_provider.dart';
+import 'package:flutter/services.dart';
 import 'checkout/checkout_screen.dart';
 
 class EventDetailScreen extends StatelessWidget {
@@ -60,12 +64,25 @@ class EventDetailScreen extends StatelessWidget {
                         : Icons.favorite_outline,
                     color: event.isFavorite == true ? Colors.red : Colors.white,
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     final provider = context.read<EventProvider>();
-                    if (event.isFavorite == true) {
-                      provider.removeFavorite(event.id);
+                    bool success;
+                    final isFav = event.isFavorite == true;
+                    if (isFav) {
+                      success = await provider.removeFavorite(event.id);
                     } else {
-                      provider.addFavorite(event.id);
+                      success = await provider.addFavorite(event.id);
+                    }
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(success 
+                            ? (isFav ? 'Retiré des favoris' : 'Ajouté aux favoris')
+                            : 'Erreur: ${provider.error ?? "Veuillez réessayer"}'),
+                          backgroundColor: success ? Colors.green : Colors.red,
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
                     }
                   },
                 ),
@@ -78,7 +95,16 @@ class EventDetailScreen extends StatelessWidget {
                 ),
                 child: IconButton(
                   icon: const Icon(Icons.share, color: Colors.white),
-                  onPressed: () {},
+                  onPressed: () {
+                    final shareText = 'Ne manquez pas l\'événement "${event.title}" le $formattedDate à ${event.location} !';
+                    Clipboard.setData(ClipboardData(text: shareText));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Détails de l\'événement copiés !'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
                 ),
               ),
             ],
@@ -170,6 +196,15 @@ class EventDetailScreen extends StatelessWidget {
                       ),
                     ),
                   ],
+
+                  // Mini Map
+                  const SizedBox(height: 16),
+                  LocationMapPreview(
+                    location: event.location,
+                    locationDetails: event.locationDetails,
+                    latitude: event.latitude,
+                    longitude: event.longitude,
+                  ),
                   if (event.attendeeCount != null) ...[
                     const SizedBox(height: 16),
                     _InfoRow(
@@ -397,6 +432,168 @@ class _TicketTypeCard extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class LocationMapPreview extends StatefulWidget {
+  final String location;
+  final String? locationDetails;
+  final double? latitude;
+  final double? longitude;
+
+  const LocationMapPreview({
+    Key? key,
+    required this.location,
+    this.locationDetails,
+    this.latitude,
+    this.longitude,
+  }) : super(key: key);
+
+  @override
+  State<LocationMapPreview> createState() => _LocationMapPreviewState();
+}
+
+class _LocationMapPreviewState extends State<LocationMapPreview> {
+  LatLng? _coordinates;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _resolveCoordinates();
+  }
+
+  Future<void> _resolveCoordinates() async {
+    if (widget.latitude != null && widget.longitude != null) {
+      if (mounted) {
+        setState(() {
+          _coordinates = LatLng(widget.latitude!, widget.longitude!);
+          _isLoading = false;
+        });
+      }
+      return;
+    }
+
+    try {
+      final dio = Dio();
+      // Combine location details for a better search, or just use location
+      final query = widget.locationDetails != null 
+          ? '${widget.locationDetails}, ${widget.location}, Cameroon'
+          : '${widget.location}, Cameroon';
+
+      final response = await dio.get(
+        'https://nominatim.openstreetmap.org/search',
+        queryParameters: {
+          'q': query,
+          'format': 'json',
+          'limit': 1,
+        },
+        options: Options(headers: {'User-Agent': 'Events237MobileApp/1.0'}),
+      );
+
+      if (response.data is List && (response.data as List).isNotEmpty) {
+        final data = response.data[0];
+        final lat = double.tryParse(data['lat'].toString());
+        final lon = double.tryParse(data['lon'].toString());
+
+        if (lat != null && lon != null && mounted) {
+          setState(() {
+            _coordinates = LatLng(lat, lon);
+            _isLoading = false;
+          });
+          return;
+        }
+      }
+    } catch (e) {
+      debugPrint('Geocoding error: $e');
+    }
+    
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Container(
+        height: 200,
+        alignment: Alignment.center,
+        child: CircularProgressIndicator(color: context.gold),
+      );
+    }
+
+    if (_coordinates == null) {
+      // If we couldn't resolve the location, just show nothing (or a fallback)
+      return const SizedBox.shrink();
+    }
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        height: 200,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: context.gold.withOpacity(0.3),
+            width: 1.5,
+          ),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(14.5),
+          child: FlutterMap(
+            options: MapOptions(
+              initialCenter: _coordinates!,
+              initialZoom: 15.0,
+              interactionOptions: const InteractionOptions(
+                flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+              ),
+            ),
+            children: [
+              TileLayer(
+                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                userAgentPackageName: 'com.nexgen.events237',
+              ),
+              MarkerLayer(
+                markers: [
+                  Marker(
+                    point: _coordinates!,
+                    width: 50,
+                    height: 50,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: context.gold,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: context.gold.withOpacity(0.4),
+                                blurRadius: 8,
+                                spreadRadius: 2,
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.location_on,
+                            color: Colors.white,
+                            size: 24,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

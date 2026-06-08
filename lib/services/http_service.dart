@@ -226,15 +226,18 @@ class HttpService {
       message = AppConstants.notFoundMsg;
     } else if (statusCode >= 500) {
       message = AppConstants.serverErrorMsg;
-    } else if (error.response?.data != null) {
+    } else if (error.response?.data is Map<String, dynamic>) {
       message = error.response!.data['message'] ?? message;
     }
+
+    final data = error.response?.data;
+    final isMap = data is Map<String, dynamic>;
 
     return ApiError(
       statusCode: statusCode,
       message: message,
-      code: error.response?.data['code'],
-      errors: error.response?.data['errors'],
+      code: isMap ? data['code'] : null,
+      errors: isMap ? data['errors'] : null,
     );
   }
 }

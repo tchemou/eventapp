@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../models/event.dart';
 import '../../models/order.dart';
 import '../../config/app_theme.dart';
+import '../../providers/auth_provider.dart';
 import 'payment_screen.dart';
+import '../auth/login_screen.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final Event event;
@@ -49,6 +52,20 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   void _proceedToPayment() {
     if (_totalTickets == 0) return;
+
+    if (!context.read<AuthProvider>().isLoggedIn) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Veuillez vous connecter pour continuer votre achat.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
+      );
+      return;
+    }
 
     final selectedItems = _selectedQuantities.entries.map((entry) {
       return OrderItemRequest(

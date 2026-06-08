@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../config/app_theme.dart';
 import '../../providers/auth_provider.dart';
 import 'welcome_screen.dart';
+import '../main_shell.dart';
 
 class OtpScreen extends StatefulWidget {
   final String phoneNumber;
@@ -76,7 +77,10 @@ class _OtpScreenState extends State<OtpScreen> {
         );
       } else {
         // Connexion → retour au home
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const MainShell()),
+          (route) => false,
+        );
       }
     } else {
       _pinCtrl.clear();

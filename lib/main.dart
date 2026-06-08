@@ -16,8 +16,11 @@ import 'services/http_service.dart';
 import 'services/order_service.dart';
 import 'services/ticket_service.dart';
 
+import 'package:intl/date_symbol_data_local.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('fr_FR', null);
 
   final httpService = HttpService();
   final authService = AuthService(httpService);
@@ -100,23 +103,25 @@ class _NexGenEventsAppState extends State<NexGenEventsApp> {
       debugShowCheckedModeBanner: false,
       theme:     AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.light,
 
       home: !_isInitialized
           ? const _LoadingScreen()
           : Consumer<AuthProvider>(
               builder: (context, authProvider, _) {
-                if (authProvider.isLoggedIn) {
-                  // ✅ Nouvel utilisateur → WelcomeScreen
-                  if (authProvider.isNewUser) return const WelcomeScreen();
-                  return const MainShell();
-                }
                 if (_showSplash) {
                   return SplashScreen(
                     onDone: () => setState(() => _showSplash = false),
                   );
                 }
-                return const LoginScreen();
+                
+                // Si nouvel inscrit on affiche le WelcomeScreen
+                if (authProvider.isLoggedIn && authProvider.isNewUser) {
+                  return const WelcomeScreen();
+                }
+
+                // Toujours aller à l'accueil (MainShell) pour permettre le mode invité
+                return const MainShell();
               },
             ),
     );

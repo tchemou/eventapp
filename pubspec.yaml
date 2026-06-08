@@ -46,7 +46,8 @@ dependencies:
   image_picker: ^1.0.0
 
   # Maps
-  google_maps_flutter: ^2.5.0
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
 
   # Payment
   flutter_stripe: ^11.1.0

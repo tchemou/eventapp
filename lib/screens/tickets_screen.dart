@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../config/app_theme.dart';
 import '../providers/ticket_provider.dart';
+import '../providers/auth_provider.dart';
 import '../models/order.dart';
 import 'tickets/ticket_detail_screen.dart';
+import 'auth/login_screen.dart';
 
 class TicketsScreen extends StatefulWidget {
   const TicketsScreen({Key? key}) : super(key: key);
@@ -23,7 +25,9 @@ class _TicketsScreenState extends State<TicketsScreen>
     
     // Fetch tickets on load
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<TicketProvider>().getTickets();
+      if (context.read<AuthProvider>().isLoggedIn) {
+        context.read<TicketProvider>().getTickets();
+      }
     });
   }
 
@@ -46,7 +50,9 @@ class _TicketsScreenState extends State<TicketsScreen>
           ],
         ),
       ),
-      body: Consumer<TicketProvider>(
+      body: !context.watch<AuthProvider>().isLoggedIn 
+          ? _buildGuestView(context)
+          : Consumer<TicketProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {
             return const Center(child: CircularProgressIndicator());
@@ -141,10 +147,10 @@ class _TicketsScreenState extends State<TicketsScreen>
               ),
               child: Icon(icon, size: 64, color: context.gold.withOpacity(0.6)),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
             Text(
               title,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
             ),
@@ -154,14 +160,50 @@ class _TicketsScreenState extends State<TicketsScreen>
               style: Theme.of(context).textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGuestView(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.confirmation_number_outlined, size: 80, color: context.gold),
             const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: () {
-                // Return to home tab
-                DefaultTabController.of(context)?.animateTo(0);
-              },
-              icon: const Icon(Icons.explore),
-              label: const Text('Découvrir des événements'),
+            Text(
+              'Mode invité',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Connectez-vous pour consulter et utiliser vos billets.',
+              style: Theme.of(context).textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 32),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const LoginScreen()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: context.gold,
+                  foregroundColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
+                child: const Text('Se connecter', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              ),
             ),
           ],
         ),

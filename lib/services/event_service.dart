@@ -131,8 +131,7 @@ class EventService {
   /// Add event to favorites
   Future<void> addFavorite(String eventId) async {
     await _httpService.post(
-      ApiConfig.addFavorite,
-      data: {'eventId': eventId},
+      ApiConfig.addFavorite.replaceAll('{eventId}', eventId),
     );
   }
 

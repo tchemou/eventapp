@@ -77,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen>
             isSignup: !_isLogin,
           ),
           transitionsBuilder: (_, anim, __, child) => SlideTransition(
-            position: Tween(
+            position: Tween<Offset>(
               begin: const Offset(1, 0),
               end: Offset.zero,
             ).animate(CurvedAnimation(

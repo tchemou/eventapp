@@ -17,10 +17,12 @@ class ProfileScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Profil'),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
+      body: !authProvider.isLoggedIn 
+          ? _buildGuestView(context)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
             // Avatar
             const SizedBox(height: 16),
             CircleAvatar(
@@ -141,6 +143,51 @@ class ProfileScreen extends StatelessWidget {
               style: Theme.of(context).textTheme.labelSmall,
             ),
             const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGuestView(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.person_outline, size: 80, color: context.gold),
+            const SizedBox(height: 24),
+            Text(
+              'Mode invité',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Connectez-vous pour voir votre profil, vos billets et gérer vos préférences.',
+              style: Theme.of(context).textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 32),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const LoginScreen()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: context.gold,
+                  foregroundColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
+                child: const Text('Se connecter', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              ),
+            ),
           ],
         ),
       ),

@@ -27,9 +27,9 @@ class AppTheme {
   static const Color _darkBg       = Color(AppConstants.darkBg);
   static const Color _darkCard     = Color(AppConstants.cardDark);
   static const Color _darkSurface  = Color(0xFF1E1800);
-  static const Color _lightBg      = Color(0xFFFFFBF0);
-  static const Color _lightSurface = Color(0xFFFFF3CC);
-  static const Color _lightCard    = Color(0xFFFFF8DC);
+  static const Color _lightBg      = Color(0xFFFFFFFF);
+  static const Color _lightSurface = Color(0xFFFFFFFF);
+  static const Color _lightCard    = Color(0xFFFFFFFF);
 
   // ════════════════════════════════════════════════════════════════════
   //  THÈME SOMBRE (reprend et enrichit ton thème existant)
